@@ -1,0 +1,19 @@
+---
+import type { BreadcrumbItemMapping } from '@/lib/shared/types';
+const { segments } = Astro.props;
+
+interface Props {
+  segments: BreadcrumbItemMapping[];
+}
+---
+
+<nav>
+  {
+    segments.map((segment, i) => (
+      <>
+        <a href={segment.href}>{segment.label}</a>
+        {i < segments.length - 1 && ' > '}
+      </>
+    ))
+  }
+</nav>

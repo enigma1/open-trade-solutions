@@ -1,0 +1,7 @@
+---
+const { code, reason } = Astro.props;
+const errorCode = code === 404 ? 'Not Found' : 'Unknown';
+---
+
+<h1>Page Error</h1>
+<p>{errorCode}: {reason}</p>

@@ -1,0 +1,23 @@
+---
+import Page from '@/components/Page.astro';
+import ProductGridCard from '@/components/products/ProductGridCard.astro';
+import { getProductsFromRequest } from '@/lib/server/products/product.service';
+// import { searchResults } from '@/data/';
+const url = new URL(Astro.request.url);
+const q = url.searchParams.get('q');
+const searchResults = await getProductsFromRequest(url.searchParams);
+
+// fetch products based on q
+// const results = await fetch(`https://api/search?q=${q}`).then((r) => r.json());
+---
+
+<Page title='Search Results'>
+  <h1>Results for {q}</h1>
+  <div class='grid'>
+    {
+      (searchResults as any).map((product: any) => (
+        <ProductGridCard product={product} />
+      ))
+    }
+  </div>
+</Page>

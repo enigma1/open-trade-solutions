@@ -1,0 +1,39 @@
+---
+// import type { CategoryListType } from '@/lib/shared/types';
+const { category } = Astro.props;
+// interface Props {
+//   category: CategoryListType;
+// }
+
+const { id, name, image, align = 'reverse' } = category;
+const hasImage = image && image !== '';
+const base = `/api/image?src=images/${image}`;
+---
+
+<div class='bg-surface-muted rounded-lg p-4 md:p-6 mb-6'>
+  <a href={`/categories-listing?categories=${id}`} class='block group'>
+    <div
+      class={`flex flex-col gap-4 ${
+        align === 'reverse' ? 'flex-col-reverse' : ''
+      }`}
+    >
+      {
+        hasImage ? (
+          <img
+            src={`${base}&width=300`}
+            alt={name}
+            class='w-full h-48 object-cover rounded border'
+          />
+        ) : (
+          <div class='w-full h-48 bg-surface-muted rounded flex items-center justify-center text-muted'>
+            No image
+          </div>
+        )
+      }
+
+      <h3 class='text-lg font-semibold text-text group-hover:underline'>
+        {name}
+      </h3>
+    </div>
+  </a>
+</div>

@@ -1,0 +1,21 @@
+---
+import { getValidIndex } from '@/lib/shared/utils/numbers';
+import Page from '@/components/Page.astro';
+import ProductInfoCard from '@/components/products/ProductInfoCard.astro';
+import { getProductInfoById } from '@/lib/server/products/product.service';
+
+const url = new URL(Astro.request.url);
+const id = getValidIndex(url.searchParams.get('id'));
+if (!id) {
+  return Astro.rewrite('/404?code=invalid_product_id');
+}
+const data = await getProductInfoById(id);
+
+if (!data || !data.product || !data.special || !data.content) {
+  return Astro.rewrite('/404?code=product_missing');
+}
+---
+
+<Page title={data.product.products_name}>
+  <ProductInfoCard productInfo={data} />
+</Page>

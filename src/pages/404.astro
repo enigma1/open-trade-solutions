@@ -1,0 +1,26 @@
+---
+import Error from '@/components/Error.astro';
+import Page from '@/components/Page.astro';
+
+const getErrorCode = (code: unknown) => {
+  switch (code) {
+    case 'invalid_product_id':
+      return 'Invalid Product ID';
+    case 'product_missing':
+      return 'Product is unavailable';
+    case 'invalid_category_id':
+      return 'Invalid Category ID';
+    case 'category_missing':
+      return 'Category is unavailable';
+    default:
+      return 'Unknown Error';
+  }
+};
+
+const url = new URL(Astro.request.url);
+const code = getErrorCode(url.searchParams.get('code'));
+---
+
+<Page title='Error Not Found'>
+  <Error code={404} reason={code} />
+</Page>

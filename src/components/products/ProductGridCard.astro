@@ -1,0 +1,71 @@
+---
+import type { ProductListType } from '@/lib/shared/types';
+import Button from '@/components/ui/Button.astro';
+const { product: item } = Astro.props;
+
+const { product, special, content } = item;
+
+const img = product.products_image;
+const hasImage = img && img !== '';
+const base = `/api/image?src=images/${img}`;
+interface Props {
+  product: ProductListType;
+}
+---
+
+<div
+  class='p-4 bg-surface border border-border rounded-lg hover:shadow-md transition flex flex-col gap-3'
+>
+  <a
+    href={`/product?id=${product.products_id}`}
+    class='block rounded-lg transition'
+  >
+    <h3 class='text-lg font-semibold text-text'>
+      {content.products_name}
+    </h3>
+
+    {
+      hasImage ? (
+        <img
+          src={`${base}&width=300`}
+          sizes='(max-width: 768px) 150px, 300px'
+          alt={content.products_name}
+          class='w-full h-48 object-cover mt-2 rounded border'
+        />
+      ) : (
+        <div
+          title={content.products_name}
+          class='w-full h-48 bg-surface-muted rounded flex items-center justify-center text-text-muted'
+        >
+          No image
+        </div>
+      )
+    }
+  </a>
+  {
+    special?.special_price ? (
+      <div class='flex items-baseline gap-2'>
+        <h6 class='text-sm text-text-muted line-through'>
+          £{Number(product.products_price).toFixed(2)}
+        </h6>
+        <h6 class='text-lg font-semibold text-danger'>
+          £{Number(special.special_price).toFixed(2)}
+        </h6>
+      </div>
+    ) : (
+      <h6 class='text-text'>£{Number(product.products_price).toFixed(2)}</h6>
+    )
+  }
+
+  <div class='flex space-x-2 mt-auto border-t border-border pt-4'>
+    <Button size='sm' class='flex mt-auto'>Buy Now</Button>
+    <Button
+      size='sm'
+      variant='secondary'
+      class='flex mt-auto'
+      href={`/product?id=${product.products_id}`}
+    >
+      More
+    </Button>
+  </div>
+</div>

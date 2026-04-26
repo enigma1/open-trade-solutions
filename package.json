@@ -1,0 +1,29 @@
+{
+  "author": "Mark Samios",
+  "license": "GPL-3.0",
+  "name": "open-trade-solutions",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "test": "vitest",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/node": "^10.0.5",
+    "astro": "^6.1.6",
+    "mysql2": "^3.22.0",
+    "sharp": "^0.34.5",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.3",
+    "tailwindcss": "^4.2.3",
+    "vitest": "^4.1.4"
+  }
+}
