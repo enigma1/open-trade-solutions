@@ -1,5 +1,5 @@
-import { buildQueryContext, InitialSelectInput } from '@/lib/server/query';
-import { PaginationSchema, transformToLimitOffset } from '@/lib/server/shared';
+import { buildQueryContext, InitialSelectInput } from '>/lib/server/query';
+import { PaginationSchema, transformToLimitOffset } from '>/lib/server/shared';
 import {
   CategoriesQuerySchema,
   CategoriesQuery,
@@ -11,15 +11,15 @@ import {
   applyCategoriesToProducts,
   applyCategoriesLanguage,
 } from './categories.query';
-import { processNestedTablesSimpleRequest } from '@/lib/server/db/execution';
-import { createQueryContext } from '@/lib/server/query';
+import { processNestedTablesSimpleRequest } from '>/lib/server/db/execution';
+import { createQueryContext } from '>/lib/server/query';
 import {
   CategoryBreadcrumbType,
   CategoryListBaseType,
-} from '@/lib/shared/types';
+} from '>/lib/shared/types';
 import { initialCategoriesBreadcrumbSelect } from './categories.schema';
-import { processNestedTablesRequest } from '@/lib/server/db/execution';
-import type { GetResultsFromRequest } from '@/lib/server/db/execution/types';
+import { processNestedTablesRequest } from '>/lib/server/db/execution';
+import type { GetResultsFromRequest } from '>/lib/server/db/execution/types';
 
 export const getCategoriesOfProduct = async (id: number) => {
   const ctx = createQueryContext(initialCategoriesBreadcrumbSelect, {

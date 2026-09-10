@@ -1,5 +1,5 @@
-import { queryRows } from '@/lib/server/db';
-import { routes } from '@/lib/shared/routes';
+import { queryRows } from '>/lib/server/db';
+import { routes } from '>/lib/shared/routes';
 import type { BrandDescriptionRow } from './types';
 
 export const getBrandsDescriptions = async (

@@ -1,5 +1,5 @@
+import { queryRows } from '>/lib/server/db';
 import type { ConfigurationRow } from './types';
-import { queryRows } from '@/lib/server/db';
 
 // Load configuration into memory when server starts
 let configCache: Record<string, string> | null = null;

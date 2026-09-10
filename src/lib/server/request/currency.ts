@@ -1,5 +1,5 @@
-import { db } from '@/lib/server/db';
-import { getConfig } from '@/lib/server/db/configuration';
+import { db } from '>/lib/server/db';
+import { getConfig } from '>/lib/server/db/configuration';
 import { CurrencyRow, CurrenciesMap } from './types';
 
 let currenciesCache: CurrenciesMap | null = null;

@@ -67,3 +67,9 @@ The API layer is designed to remain framework-agnostic over time.
 - Server-rendered catalog for SEO performance
 - Decoupled SPA-based transactional systems
 - Centralized localization and currency handling at request level
+
+## Other notes
+
+- Upgraded to Astro 7.3
+- Fix for featured listing of products.
+- Added separate initial select for featured.

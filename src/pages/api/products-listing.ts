@@ -1,6 +1,6 @@
 import type { APIContext } from 'astro';
-import { getProducts } from '@/lib/server/repos';
-import { ProductsQuerySchema } from '@/lib/server/products/products.schema';
+import { getProducts } from '>/lib/server/repos';
+import { ProductsQuerySchema } from '>/lib/server/products/products.schema';
 
 export async function GET({ url }: { url: URL }) {
   const raw = Object.fromEntries(url.searchParams.entries());

@@ -1,10 +1,10 @@
 import type { ProductListingContext } from './types';
-import { getUniqueNumberedList } from '@/lib/shared/utils';
+import { getUniqueNumberedList } from '>/lib/shared/utils';
 import {
   getCategoriesBreadcrumb,
   getCategoriesDescriptions,
-} from '@/lib/server/categories';
-import { getBrandBreadcrumb, getBrandsDescriptions } from '@/lib/server/brands';
+} from '>/lib/server/categories';
+import { getBrandBreadcrumb, getBrandsDescriptions } from '>/lib/server/brands';
 import type { TranslatorFn } from './types';
 
 export async function buildProductListingContext(

@@ -1,4 +1,4 @@
-// import { queryRows } from '@/lib/server/db';
+// import { queryRows } from '>/lib/server/db';
 // import { LanguageStringsRow } from './types';
 
 // const stringsCache: Record<string, Record<string, string>> = {};

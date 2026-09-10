@@ -1,7 +1,7 @@
-import { parseListOfNumbers } from '@/lib/shared/utils';
-import { getProductBreadcrumb } from '@/lib/server/products/product.repo';
-import { getCategoriesBreadcrumb } from '@/lib/server/categories/categories.repo';
-import { getBrandBreadcrumb } from '@/lib/server/brands/brands.repo';
+import { parseListOfNumbers } from '>/lib/shared/utils';
+import { getProductBreadcrumb } from '>/lib/server/products/product.repo';
+import { getCategoriesBreadcrumb } from '>/lib/server/categories/categories.repo';
+import { getBrandBreadcrumb } from '>/lib/server/brands/brands.repo';
 
 export const getBreadcrumbFromParams = async (params: URLSearchParams) => {
   const productIds = parseListOfNumbers(params.get('products') ?? '');

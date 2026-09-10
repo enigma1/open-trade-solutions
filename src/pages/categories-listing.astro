@@ -1,17 +1,17 @@
 ---
-import Page from '@/components/Page.astro';
-import Pagination from '@/components/Pagination.astro';
-import Breadcrumb from '@/components/Breadcrumb.astro';
-import { getCategoriesFromRequest } from '@/lib/server/categories';
-import { CategoriesGrid, CategoryGridEmpty } from '@/components/categories';
+import Page from '>/components/Page.astro';
+import Pagination from '>/components/Pagination.astro';
+import Breadcrumb from '>/components/Breadcrumb.astro';
+import { getCategoriesFromRequest } from '>/lib/server/categories';
+import { CategoriesGrid, CategoryGridEmpty } from '>/components/categories';
 import {
   createRequestContext,
   buildCategoriesListingContext,
-} from '@/lib/server/page-context';
-import type { CategoryListType } from '@/lib/shared/types';
+} from '>/lib/server/page-context';
+import type { CategoryListType } from '>/lib/shared/types';
+import ListingIntro from '>/components/ListingIntro.astro';
 
-import ListingIntro from '@/components/ListingIntro.astro';
-// import { buildCategoriesListingContext } from '@/lib/server/categories';
+// import { buildCategoriesListingContext } from '>/lib/server/categories';
 const { lang, t, url } = await createRequestContext(Astro);
 const context = await buildCategoriesListingContext(url.searchParams, t);
 const categoriesData = await getCategoriesFromRequest(url.searchParams);

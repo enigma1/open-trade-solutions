@@ -1,4 +1,4 @@
-import { getConfig, getConfigMultiple } from '@/lib/server/db/configuration';
+import { getConfig, getConfigMultiple } from '>/lib/server/db/configuration';
 import { currencyApi } from './currency';
 import { languageApi } from './language';
 
@@ -11,7 +11,7 @@ import {
 } from './cookies';
 
 import type { StoreContext } from './types';
-import type { ContextPostParams } from '@/lib/shared/types';
+import type { ContextPostParams } from '>/lib/shared/types';
 
 type ResolveStoreContextProps = {
   request: Request;

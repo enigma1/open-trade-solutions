@@ -1,4 +1,4 @@
-import { getConfigMultiple } from '@/lib/server/db/configuration';
+import { getConfigMultiple } from '>/lib/server/db/configuration';
 import type { StoreContext } from './types';
 
 export const STORE_CONTEXT_COOKIE = 'store_context';

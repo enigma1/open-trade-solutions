@@ -1,7 +1,7 @@
-import { db, queryRows } from '@/lib/server/db';
-import { CategoryBreadcrumbType } from '@/lib/shared/types';
+import { db, queryRows } from '>/lib/server/db';
+import { CategoryBreadcrumbType } from '>/lib/shared/types';
 import type { CategoryPathItem, CategoryDescriptionRow } from './types';
-import { routes } from '@/lib/shared/routes';
+import { routes } from '>/lib/shared/routes';
 
 export const getCategories = async () => {
   const [rows] = await db.query(

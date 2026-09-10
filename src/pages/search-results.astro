@@ -1,7 +1,7 @@
 ---
-import Page from '@/components/Page.astro';
-import ProductGridCard from '@/components/products/ProductGridCard.astro';
-import { getProductsFromRequest } from '@/lib/server/products/product.service';
+import Page from '>/components/Page.astro';
+import ProductGridCard from '>/components/products/ProductGridCard.astro';
+import { getProductsFromRequest } from '>/lib/server/products/product.service';
 // import { searchResults } from '@/data/';
 const url = new URL(Astro.request.url);
 const q = url.searchParams.get('q');

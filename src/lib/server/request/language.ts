@@ -1,5 +1,5 @@
-import { db, queryRows } from '@/lib/server/db';
-import { getConfig } from '@/lib/server/db/configuration';
+import { db, queryRows } from '>/lib/server/db';
+import { getConfig } from '>/lib/server/db/configuration';
 import type { LanguageStringsRow, LanguageRow, LanguagesMap } from './types';
 
 const stringsCache: Record<string, Record<string, string>> = {};

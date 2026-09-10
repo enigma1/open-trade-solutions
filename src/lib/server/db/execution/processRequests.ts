@@ -1,8 +1,8 @@
-import { type QueryContext } from '@/lib/server/query/types';
-import { buildQuery } from '@/lib/server/query';
-import { queryRows } from '@/lib/server/db';
-import { transformData } from '@/lib/server/shared/transformers';
-import type { InitialSelectInput } from '@/lib/server/query/types';
+import { type QueryContext } from '>/lib/server/query/types';
+import { buildQuery } from '>/lib/server/query';
+import { queryRows } from '>/lib/server/db';
+import { transformData } from '>/lib/server/shared/transformers';
+import type { InitialSelectInput } from '>/lib/server/query/types';
 import { type GetResultsFromRequest } from './types';
 
 type ProcessNestedTablesRequestProps = {

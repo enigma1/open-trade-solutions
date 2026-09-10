@@ -1,10 +1,10 @@
 import type {
   CategoryBreadcrumbType,
   ProductBreadcrumbType,
-} from '@/lib/shared/types';
-import { routes } from '@/lib/shared/routes';
-import { mapCategoriesBreadcrumb } from '@/lib/server/categories/categories.repo';
-import type { BreadcrumbItemMapping } from '@/lib/shared/types';
+} from '>/lib/shared/types';
+import { routes } from '>/lib/shared/routes';
+import { mapCategoriesBreadcrumb } from '>/lib/server/categories/categories.repo';
+import type { BreadcrumbItemMapping } from '>/lib/shared/types';
 
 export const buildCategoriesBreadcrumbMapping = (data: {
   categories: CategoryBreadcrumbType[];

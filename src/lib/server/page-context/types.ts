@@ -1,4 +1,4 @@
-import { BreadcrumbItemMapping } from '@/lib/shared/types';
+import { BreadcrumbItemMapping } from '>/lib/shared/types';
 
 export type ProductListingContext = {
   type: 'category' | 'brand' | 'all';

@@ -1,6 +1,6 @@
 import type { QueryContext } from './types';
-import type { PaginationParams } from '@/lib/server/shared';
-import { trimTail } from '@/lib/shared/utils';
+import type { PaginationParams } from '>/lib/server/shared';
+import { trimTail } from '>/lib/shared/utils';
 
 type BuildQueryProps = {
   ctx: QueryContext;

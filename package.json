@@ -3,9 +3,9 @@
   "license": "GPL-3.0",
   "name": "open-trade-solutions",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=24.0.0"
   },
   "scripts": {
     "dev": "astro dev",
@@ -15,8 +15,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^10.0.5",
-    "astro": "^6.1.6",
+    "@astrojs/node": "^11.1.5",
+    "astro": "^7.3.2",
     "mysql2": "^3.22.0",
     "sharp": "^0.34.5",
     "zod": "^4.3.6"

@@ -1,5 +1,5 @@
-import type { InitialSelectInput } from '@/lib/server/query/types';
-import { type SelectGroup } from '@/lib/server/query';
+import type { InitialSelectInput } from '>/lib/server/query/types';
+import { type SelectGroup } from '>/lib/server/query';
 
 export const transformData = <
   T extends Record<string, any> = Record<string, any>,

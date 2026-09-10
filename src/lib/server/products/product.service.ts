@@ -1,9 +1,9 @@
-import { queryRows } from '@/lib/server/db';
+import { queryRows } from '>/lib/server/db';
 import {
   processNestedTablesRequest,
   processNestedTablesSimpleRequest,
-} from '@/lib/server/db/execution';
-import { type InitialSelectInput, buildQuery } from '@/lib/server/query';
+} from '>/lib/server/db/execution';
+import { type InitialSelectInput, buildQuery } from '>/lib/server/query';
 import {
   createProductQueryContext,
   applyProductsSort,
@@ -15,28 +15,29 @@ import {
   applyFeaturedProductsSort,
   applyProductsLanguage,
 } from './product.query';
-import { applyCategoriesToProducts } from '@/lib/server/categories/categories.query';
+import { applyCategoriesToProducts } from '>/lib/server/categories/categories.query';
 import {
   buildQueryContext,
   createQueryContext,
-} from '@/lib/server/query/buildQueryContext';
-import { transformToLimitOffset } from '@/lib/server/shared';
+} from '>/lib/server/query/buildQueryContext';
+import { transformToLimitOffset } from '>/lib/server/shared';
 import {
   initialProductBreadcrumbSelect,
   initialProductInfoSelect,
   initialProductsSelect,
+  initialProductsOnlySelect,
   ProductsQuerySchema,
   type ProductsQuery,
 } from './products.schema';
-import { PaginationSchema } from '@/lib/server/shared/pagination';
-import { getConfig } from '@/lib/server/db/configuration';
+import { PaginationSchema } from '>/lib/server/shared/pagination';
+import { getConfig } from '>/lib/server/db/configuration';
 import type {
   ProductFullType,
   ProductListBaseType,
   ProductBreadcrumbType,
-} from '@/lib/shared/types';
+} from '>/lib/shared/types';
 import type { ProductInfoRow } from './types';
-import { initialCategoriesBreadcrumbSelect } from '@/lib/server/categories/categories.schema';
+import { initialCategoriesBreadcrumbSelect } from '>/lib/server/categories/categories.schema';
 
 export const getProductById = async (
   id: number,
@@ -161,10 +162,11 @@ export const getFeaturedProducts = async () => {
 };
 
 export const buildFeaturedProductsQueryContext = (count: number) => {
-  const ctx = createQueryContext(initialProductsSelect, {
+  const ctx = createQueryContext(initialProductsOnlySelect, {
     table: 'products_featured',
     alias: 'fp',
   });
+  console.log('context-------------------------------------------', ctx);
 
   applyProductWithSpecials(ctx, 'fp');
   applyFeaturedProductsSort(ctx, 'fp');

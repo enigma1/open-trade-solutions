@@ -1,10 +1,10 @@
-import { initialProductsSelect } from '@/lib/server/products';
-import type { BaseTable, QueryContext } from '@/lib/server/query/types';
+import { initialProductsSelect } from './products.schema';
+import type { BaseTable, QueryContext } from '>/lib/server/query/types';
 import {
   addWhereIn,
   addSelect,
   createQueryContext,
-} from '@/lib/server/query/buildQueryContext';
+} from '>/lib/server/query/buildQueryContext';
 
 export const createProductQueryContext = (
   fromBase: BaseTable,

@@ -1,12 +1,12 @@
-import { queryRows } from '@/lib/server/db/queryRows';
+import { queryRows } from '>/lib/server/db/queryRows';
 import { getProductForBreadcrumb } from './product.service';
 import type { ProductDescriptionRow } from './types';
-import { buildProductBreadcrumbMapping } from '@/lib/server/navigation/breadcrumb.maker';
-import { CategoryBreadcrumbType } from '@/lib/shared/types';
+import { buildProductBreadcrumbMapping } from '>/lib/server/navigation/breadcrumb.maker';
+import { CategoryBreadcrumbType } from '>/lib/shared/types';
 import {
   getCategoriesBreadcrumbContent,
   getCategoriesOfProduct,
-} from '@/lib/server/categories';
+} from '>/lib/server/categories';
 
 // export const getSpecials = async (
 //   productIds: number[],

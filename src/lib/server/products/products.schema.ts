@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { limitList, getUniqueNumberedList } from '@/lib/shared/utils';
+import { limitList, getUniqueNumberedList } from '>/lib/shared/utils';
 
 export const ProductSortSchema = z.enum(['price_asc', 'price_desc', 'newest']);
 export type ProductSort = z.infer<typeof ProductSortSchema>;
@@ -30,6 +30,19 @@ export const ProductsQuerySchema = z.object({
 export type ProductsQuery = z.infer<typeof ProductsQuerySchema>;
 
 // Initial Selects
+export const initialProductsOnlySelect = {
+  p: {
+    sqlAlias: 'p',
+    domainAlias: 'product',
+    columns: ['*'],
+  },
+  sp: {
+    sqlAlias: 'sp',
+    domainAlias: 'special',
+    columns: ['*'],
+  },
+};
+
 export const initialProductsSelect = {
   p: {
     sqlAlias: 'p',

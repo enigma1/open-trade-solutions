@@ -1,8 +1,8 @@
-import { getUniqueNumberedList } from '@/lib/shared/utils';
+import { getUniqueNumberedList } from '>/lib/shared/utils';
 import {
   getCategoriesBreadcrumb,
   getCategoriesDescriptions,
-} from '@/lib/server/categories';
+} from '>/lib/server/categories';
 import type { TranslatorFn } from './types';
 
 export const buildCategoriesListingContext = async (

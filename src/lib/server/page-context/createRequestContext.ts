@@ -1,7 +1,7 @@
 import { AstroGlobal } from 'astro';
-import { languageApi } from '@/lib/server/request/language';
-import { resolveStoreContext } from '@/lib/server/request/context';
-import { ContextPostParams } from '@/lib/shared/types';
+import { languageApi } from '>/lib/server/request/language';
+import { resolveStoreContext } from '>/lib/server/request/context';
+import { ContextPostParams } from '>/lib/shared/types';
 
 export const createRequestContext = async (Astro: AstroGlobal) => {
   const formData =

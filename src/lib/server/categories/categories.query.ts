@@ -1,15 +1,15 @@
-import { QueryContext } from '@/lib/server/query';
+import { QueryContext } from '>/lib/server/query';
 import {
   addWhereIn,
   addSelect,
   createQueryContext,
-} from '@/lib/server/query/buildQueryContext';
+} from '>/lib/server/query/buildQueryContext';
 
 export const applyCategoriesToProducts = (
   ctx: QueryContext,
   categories: number[],
 ) => {
-  if (!categories.length) return;
+  if (categories.length === 0) return;
 
   ctx.joins.set(
     'p2c',
@@ -18,7 +18,6 @@ export const applyCategoriesToProducts = (
       ON p.products_id = p2c.products_id
     `,
   );
-
   addWhereIn(ctx, 'p2c.categories_id', categories);
 };
 

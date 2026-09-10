@@ -1,8 +1,8 @@
 ---
-import { getValidIndex } from '@/lib/shared/utils/numbers';
-import Page from '@/components/Page.astro';
-import ProductInfoCard from '@/components/products/ProductInfoCard.astro';
-import { getProductInfoById } from '@/lib/server/products/product.service';
+import { getValidIndex } from '>/lib/shared/utils/numbers';
+import Page from '>/components/Page.astro';
+import ProductInfoCard from '>/components/products/ProductInfoCard.astro';
+import { getProductInfoById } from '>/lib/server/products/product.service';
 
 const url = new URL(Astro.request.url);
 const id = getValidIndex(url.searchParams.get('id'));

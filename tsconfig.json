@@ -7,10 +7,10 @@
     "jsx": "preserve",
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": false,
-    "resolvePackageJsonExports": false,
+    "resolvePackageJsonExports": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "~/*": ["./*"]
+      ">/*": ["./src/*"],
+      "</*": ["./*"]
     }
   }
 }
