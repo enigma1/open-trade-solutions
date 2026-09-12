@@ -36,3 +36,9 @@ export const hasObjectProps = <K extends string>(
 
   return props.every((key) => Object.prototype.hasOwnProperty.call(obj, key));
 };
+
+export const isEmptyObject = (obj: unknown) =>
+  obj !== null &&
+  typeof obj === 'object' &&
+  !Array.isArray(obj) &&
+  Object.keys(obj).length === 0;

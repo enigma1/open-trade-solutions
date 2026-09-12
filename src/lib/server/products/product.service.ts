@@ -36,6 +36,8 @@ import type {
   ProductListBaseType,
   ProductBreadcrumbType,
 } from '>/lib/shared/types';
+import { isEmptyObject } from '>/lib/shared/utils';
+
 import type { ProductInfoRow } from './types';
 import { initialCategoriesBreadcrumbSelect } from '>/lib/server/categories/categories.schema';
 
@@ -57,7 +59,9 @@ export const getProductById = async (
 
 // Main Products
 export const getProductsFromRequest = async (params: URLSearchParams) => {
-  const initialSelect = initialProductsSelect;
+  const initialSelect = isEmptyObject(params)
+    ? initialProductsOnlySelect
+    : initialProductsSelect;
   const { ctx, pagination } = buildProductQueryContext(params, initialSelect);
   return processNestedTablesRequest<ProductListBaseType>({
     ctx,
@@ -166,8 +170,6 @@ export const buildFeaturedProductsQueryContext = (count: number) => {
     table: 'products_featured',
     alias: 'fp',
   });
-  console.log('context-------------------------------------------', ctx);
-
   applyProductWithSpecials(ctx, 'fp');
   applyFeaturedProductsSort(ctx, 'fp');
   ctx.where.push('fp.status = 1');

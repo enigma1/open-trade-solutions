@@ -1,3 +1,7 @@
+---
+import { ShoppingCart } from 'lucide-astro';
+---
+
 <header class='bg-white shadow-sm border-b'>
   <div class='max-w-7xl mx-auto px-4 py-3 flex items-center gap-4'>
     <!-- Logo -->
@@ -24,7 +28,7 @@
         <option>EUR</option>
       </select>
 
-      <a href='/cart' class='relative'> 🛒 </a>
+      <a href='/cart' class='relative'><ShoppingCart size={24} /></a>
     </div>
   </div>
 </header>
