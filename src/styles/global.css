@@ -1,67 +1,201 @@
 @import "tailwindcss";
+@import "./index.css";
 
 :root {
-  --primary: 59 130 246;
-  --background: 255 255 255;
+  /* layout surfaces */
+  --color-bg: var(--tone-1);
+  --color-srf: var(--tone-0);
+  --color-srf-elevated: var(--tone-2);
+  --color-srf-muted: var(--tone-3);
+  --color-srf-dim: var(--tone-4);
+  --color-srf-high: var(--tone-9);
+  --color-srf-peak: var(--tone-11);
 
-  --surface-0: 250 250 250;
-  /* page background */
-  --surface-1: 240 245 247;
-  /* cards */
-  --surface-2: 226 232 240;
-  /* elevated cards / hover */
-  --surface-3: 100 116 139;
-  /* modals / overlays */
+  /* text */
+  --color-text: var(--tone-11);
+  --color-text-dim: var(--tone-10);
+  --color-text-muted: var(--tone-9);
+  --color-text-light: var(--tone-8);
+  --color-text-high: var(--tone-1);
+  --color-text-peak: var(--tone-0);
 
-  --surface-subtle: 245 247 250;
+  /* actions */
+  /* --color-action: var(--action); */
+  --color-action: color-mix(in oklch,
+      var(--action) 75%,
+      var(--color-srf-elevated) 25%);
 
-  /* Text */
-  --text: 15 23 42;
-  --muted: 100 116 139;
+  /* effects */
+  --color-effect: var(--effect);
+  --color-ring: var(--tone-5);
 
-  /* Borders */
-  --border: 216 222 232;
-  /* States */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  /* borders */
+  --color-border: var(--tone-8);
+  --color-border-focus: color-mix(in oklch,
+      var(--tone-5) 65%,
+      var(--color-effect));
+  --color-border-separate: var(--separator);
+  --color-accent: var(--tone-6);
 
-  /* Transparency helpers */
-  --alpha-10: 0.1;
-  --alpha-25: 0.25;
-  --alpha-50: 0.5;
+  /* types */
+  --error: oklch(0.65 0.22 25);
+  --warn: oklch(0.78 0.18 85);
+  --success: oklch(0.72 0.18 145);
+  --info: oklch(0.68 0.16 250);
 
-  --debug: 255 0 0;
+  --color-error: color-mix(in oklch, var(--error) 80%, var(--color-text) 20%);
+  --color-warn: color-mix(in oklch, var(--warn) 80%, var(--color-text) 20%);
+  --color-success: color-mix(in oklch, var(--success) 80%, var(--color-text) 20%);
+  --color-info: color-mix(in oklch, var(--info) 60%, var(--color-text) 40%);
+
+  --color-error-bg:
+    color-mix(in oklch, var(--error), transparent 35%);
+  --color-warn-bg:
+    color-mix(in oklch, var(--warn), transparent 35%);
+  --color-success-bg:
+    color-mix(in oklch, var(--success), transparent 50%);
+  --color-info-bg:
+    color-mix(in oklch, var(--info), transparent 75%);
+
+
+  /* interactive states */
+  --state-selected:
+    color-mix(in oklch,
+      var(--color-effect) 15%,
+      var(--color-srf-peak) 75%);
+
+  --state-flash:
+    color-mix(in oklch,
+      var(--color-effect) 40%,
+      var(--color-bg) 60%);
+
+  --state-normal:
+    color-mix(in oklch,
+      var(--color-accent) 25%,
+      var(--color-srf) 75%);
+
+  /* Shadows */
+  --shadow-2xs: 0 1px 2px 0px hsl(0 0% 0% / 0.02);
+  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  --shadow-header: 0 6px 10px -8px rgb(0 0 0 / 0.2);
+
+  /* typography */
+  --font-dm-sans: "dmSans", sans-serif;
+  --font-inter: "inter", sans-serif;
+
+  --font-sans: var(--font-dm-sans), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  --bp-xs: 640px;
+  --bp-sm: 768px;
+  --bp-md: 1024px;
+  --bp-lg: 1280px;
+  --bp-xl: 1400px;
+  --bp-2xl: 1536px;
 }
 
-/* Tailwind theme mapping */
-@theme {
-  --color-alpha-color: rgb(var(--debug)/ var(--alpha-quarter));
-  --color-just-color: rgb(var(--debug));
+@layer base {
 
-  /* Core mapping */
-  --color-primary: rgb(var(--primary));
-  --color-background: rgb(var(--background));
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-  /* Surface system */
-  --color-surface: rgb(var(--surface-0));
-  --color-surface-muted: rgb(var(--surface-1));
-  --color-surface-elevated: rgb(var(--surface-2));
-  --color-surface-subtle: rgb(var(--surface-subtle));
+  *:focus {
+    outline: none;
+  }
 
-  /* Text */
-  --color-text: rgb(var(--text));
-  --color-muted: rgb(var(--muted));
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-border-focus);
+  }
 
-  /* UI */
-  --color-border: rgb(var(--border));
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: ui-sans-serif, system-ui;
+    background-color: var(--color-bg);
+    color: var(--color-text)
+  }
 
-  /* States */
-  --color-success: rgb(var(--success));
-  --color-warning: rgb(var(--warning));
-  --color-danger: rgb(var(--danger));
-  --color-info: rgb(var(--info));
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    line-height: 1.2;
+  }
 
-  /* Effects */
-  --color-focus: rgb(var(--focus-ring));
+  p {
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  button {
+    @apply cursor-pointer;
+    font-family: inherit;
+  }
+
+  textarea {
+    resize: both;
+
+    &::placeholder {
+      @apply italic;
+      color: var(--color-text-muted);
+    }
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    border-color: var(--color-border);
+    font: inherit;
+    color: inherit;
+  }
+
+  input::placeholder {
+    @apply italic;
+    color: var(--color-text-muted);
+  }
+
+  /* Browser uses CanvasText make sure defaults are inherited */
+  dialog {
+    color: inherit;
+    background-color: inherit;
+  }
+
+  label {
+    @apply inline-block text-sm font-medium;
+    color: var(--color-text);
+
+    &[data-status="error"] {
+      color: var(--color-error);
+    }
+
+    &[data-status="warn"] {
+      color: var(--color-warn);
+    }
+
+    &[data-status="info"] {
+      color: var(--color-info);
+    }
+
+    &[data-status="success"] {
+      color: var(--color-success);
+    }
+  }
 }

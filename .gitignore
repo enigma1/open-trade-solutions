@@ -25,3 +25,8 @@ pnpm-debug.log*
 
 # other
 .bash_history
+.k*/
+/tmp
+*.log
+.sh
+.bash_history

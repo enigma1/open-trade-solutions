@@ -1,16 +1,26 @@
 {
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"],
+  "include": [
+    ".astro/types.d.ts",
+    "**/*"
+  ],
+  "exclude": [
+    "dist"
+  ],
   "compilerOptions": {
     "strict": true,
     "module": "ESNext",
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": false,
     "resolvePackageJsonExports": true,
     "paths": {
-      ">/*": ["./src/*"],
-      "</*": ["./*"]
-    }
+      ">/*": [
+        "./src/*"
+      ],
+      "</*": [
+        "./*"
+      ]
+    },
+    "jsxImportSource": "react"
   }
 }
