@@ -1,9 +1,9 @@
-import { queryRows } from '>/lib/server/db';
+import { queryRows } from ">/lib/server/db";
 import {
   processNestedTablesRequest,
   processNestedTablesSimpleRequest,
-} from '>/lib/server/db/execution';
-import { type InitialSelectInput, buildQuery } from '>/lib/server/query';
+} from ">/lib/server/db/execution";
+import { type InitialSelectInput, buildQuery } from ">/lib/server/query";
 import {
   createProductQueryContext,
   applyProductsSort,
@@ -14,13 +14,14 @@ import {
   applyProductWithSpecials,
   applyFeaturedProductsSort,
   applyProductsLanguage,
-} from './product.query';
-import { applyCategoriesToProducts } from '>/lib/server/categories/categories.query';
+  applyExtraFields,
+} from "./product.query";
+import { applyCategoriesToProducts } from ">/lib/server/categories/categories.query";
 import {
   buildQueryContext,
   createQueryContext,
-} from '>/lib/server/query/buildQueryContext';
-import { transformToLimitOffset } from '>/lib/server/shared';
+} from ">/lib/server/query/buildQueryContext";
+import { transformToLimitOffset } from ">/lib/server/shared";
 import {
   initialProductBreadcrumbSelect,
   initialProductInfoSelect,
@@ -28,25 +29,25 @@ import {
   initialProductsOnlySelect,
   ProductsQuerySchema,
   type ProductsQuery,
-} from './products.schema';
-import { PaginationSchema } from '>/lib/server/shared/pagination';
-import { getConfig } from '>/lib/server/db/configuration';
+} from "./products.schema";
+import { PaginationSchema } from ">/lib/server/shared/pagination";
+import { getConfig } from ">/lib/server/db/configuration";
 import type {
   ProductFullType,
   ProductListBaseType,
   ProductBreadcrumbType,
-} from '>/lib/shared/types';
-import { isEmptyObject } from '>/lib/shared/utils';
+} from ">/lib/shared/types";
+import { isEmptyObject } from ">/lib/shared/utils";
 
-import type { ProductInfoRow } from './types';
-import { initialCategoriesBreadcrumbSelect } from '>/lib/server/categories/categories.schema';
+import type { ProductInfoRow } from "./types";
+import { initialCategoriesBreadcrumbSelect } from ">/lib/server/categories/categories.schema";
 
 export const getProductById = async (
   id: number,
 ): Promise<ProductInfoRow | null> => {
-  const ctx = createProductQueryContext({ table: 'products', alias: 'p' });
+  const ctx = createProductQueryContext({ table: "products", alias: "p" });
   applyProductsIds(ctx, [id]);
-  applySpecials(ctx, 'p');
+  applySpecials(ctx, "p");
   const { query, params } = buildQuery({
     ctx,
   });
@@ -74,7 +75,7 @@ export const buildProductQueryContext = (
   initialSelect: InitialSelectInput,
 ) => {
   const raw = Object.fromEntries(params.entries());
-  const isMixed = 'categories' in raw && 'brands' in raw;
+  const isMixed = "categories" in raw && "brands" in raw;
 
   const { page, perPage } = PaginationSchema.parse(
     Object.fromEntries(params.entries()),
@@ -82,7 +83,7 @@ export const buildProductQueryContext = (
   const pagination = transformToLimitOffset(page, perPage);
   // It builds pagination on the return object fix it.
   const { ctx, query } = buildQueryContext<ProductsQuery>({
-    fromBase: { table: 'products', alias: 'p' },
+    fromBase: { table: "products", alias: "p" },
     params,
     schema: ProductsQuerySchema.pick({
       categories: true,
@@ -92,12 +93,12 @@ export const buildProductQueryContext = (
     features: [
       (ctx, q) => applyCategoriesToProducts(ctx, q.categories),
       (ctx, q) => applyProductsToBrands(ctx, q.brands),
-      (ctx) => applySpecials(ctx, 'p'),
+      (ctx) => applySpecials(ctx, "p"),
       (ctx, q) => applyProductsSort(ctx, q.sort),
     ],
     initialSelect,
   });
-  ctx.where.push('p.products_display = 1');
+  ctx.where.push("p.products_display = 1");
   // after features applied
   ctx.nestTables = ctx.joins.size > 0;
   return {
@@ -130,7 +131,7 @@ export const buildSpecialProductsQueryContext = (
   );
   const pagination = transformToLimitOffset(page, perPage);
   const { ctx, query } = buildQueryContext<ProductsQuery>({
-    fromBase: { table: 'products_specials', alias: 'sp' },
+    fromBase: { table: "products_specials", alias: "sp" },
     params,
     schema: ProductsQuerySchema.pick({
       categories: true,
@@ -138,14 +139,14 @@ export const buildSpecialProductsQueryContext = (
       sort: true,
     }),
     features: [
-      (ctx) => applyProducts(ctx, 'sp'),
+      (ctx) => applyProducts(ctx, "sp"),
       (ctx, q) => applyCategoriesToProducts(ctx, q.categories),
       (ctx, q) => applyProductsToBrands(ctx, q.brands),
       (ctx, q) => applyProductsSort(ctx, q.sort),
     ],
     initialSelect,
   });
-  ctx.where.push('p.products_display = 1');
+  ctx.where.push("p.products_display = 1");
   // after features applied
   ctx.nestTables = ctx.joins.size > 0;
   return {
@@ -156,7 +157,7 @@ export const buildSpecialProductsQueryContext = (
 };
 
 export const getFeaturedProducts = async () => {
-  const count = Number(await getConfig('products.featured_listing_size'));
+  const count = Number(await getConfig("products.featured_listing_size"));
   if (!count) return [];
 
   const { ctx } = buildFeaturedProductsQueryContext(count);
@@ -167,14 +168,15 @@ export const getFeaturedProducts = async () => {
 
 export const buildFeaturedProductsQueryContext = (count: number) => {
   const ctx = createQueryContext(initialProductsOnlySelect, {
-    table: 'products_featured',
-    alias: 'fp',
+    table: "products_featured",
+    alias: "fp",
   });
-  applyProductWithSpecials(ctx, 'fp');
-  applyFeaturedProductsSort(ctx, 'fp');
-  ctx.where.push('fp.status = 1');
-  ctx.where.push('p.products_display = 1');
-  ctx.orderBy = 'fp.sort_order ASC';
+  applyProductWithSpecials(ctx, "fp");
+  applyExtraFields(ctx);
+  applyFeaturedProductsSort(ctx, "fp");
+  ctx.where.push("fp.status = 1");
+  ctx.where.push("p.products_display = 1");
+  ctx.orderBy = "fp.sort_order ASC";
   ctx.limit = count;
   ctx.nestTables = ctx.joins.size > 0;
   return { ctx };
@@ -182,13 +184,13 @@ export const buildFeaturedProductsQueryContext = (count: number) => {
 
 export const getProductInfoById = async (id: number) => {
   const ctx = createQueryContext(initialProductInfoSelect, {
-    table: 'products',
-    alias: 'p',
+    table: "products",
+    alias: "p",
   });
-  applySpecials(ctx, 'p');
+  applySpecials(ctx, "p");
   applyProductsLanguage(ctx);
-  ctx.where.push('p.products_display = 1');
-  ctx.where.push('p.products_id = ?');
+  ctx.where.push("p.products_display = 1");
+  ctx.where.push("p.products_id = ?");
   ctx.params.push(id);
   ctx.limit = 1;
   ctx.nestTables = ctx.joins.size > 0;
@@ -200,13 +202,13 @@ export const getProductInfoById = async (id: number) => {
 
 export const getProductForBreadcrumb = async (id: number) => {
   const ctx = createQueryContext(initialProductBreadcrumbSelect, {
-    table: 'products',
-    alias: 'p',
+    table: "products",
+    alias: "p",
   });
 
   applyProductsLanguage(ctx, 1);
-  ctx.where.push('p.products_display = 1');
-  ctx.where.push('p.products_id = ?');
+  ctx.where.push("p.products_display = 1");
+  ctx.where.push("p.products_id = ?");
   ctx.params.push(id);
   ctx.limit = 1;
   ctx.nestTables = ctx.joins.size > 0;

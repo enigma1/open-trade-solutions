@@ -1,10 +1,10 @@
 ---
-import Page from '>/components/Page.astro';
-import ProductGridCard from '>/components/products/ProductGridCard.astro';
-import { getFeaturedProducts } from '>/lib/server/products/product.service';
-import type { ProductListType, ProductListBaseType } from '>/lib/shared/types';
-import { getProductsDescriptions } from '>/lib/server/products/product.repo';
-import { AddToCartButton } from '>/islands';
+import Page from ">/components/Page.astro";
+import ProductGridCard from ">/components/products/ProductGridCard.astro";
+import { getFeaturedProducts } from ">/lib/server/products/product.service";
+import type { ProductListType, ProductListBaseType } from ">/lib/shared/types";
+import { getProductsDescriptions } from ">/lib/server/products/product.repo";
+import { AddToCartButton } from ">/Islands";
 
 const data = await getFeaturedProducts();
 let products: ProductListType[] = [];
@@ -17,18 +17,20 @@ if (!isEmpty) {
   products = data.map((row) => ({
     ...row,
     content: {
-      products_name: map.get(row.product.products_id)?.products_name ?? '',
+      products_name: map.get(row.product.products_id)?.products_name ?? "",
       products_description:
-        map.get(row.product.products_id)?.products_description ?? '',
+        map.get(row.product.products_id)?.products_description ?? "",
     },
   }));
 }
 ---
 
-<Page title='Store Name'>
+<Page title="Store Name">
   <h1>Welcome to Our Store</h1>
   <h2>Featured Products</h2>
-  <div class='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-    {products.map((item) => <ProductGridCard product={item} />)}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    {products.map((item) => (
+      <ProductGridCard product={item} />
+    ))}
   </div>
 </Page>

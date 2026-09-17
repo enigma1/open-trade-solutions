@@ -1,16 +1,13 @@
-import { CartItem } from '>/lib/client/types/cart';
+import { cartStore } from ">/client/app";
+import type { CartItem } from ">/lib/client";
 
 export const AddToCartButton = ({ productId, fields, qty }: CartItem) => {
   const handleClick = () => {
-    console.log('Add to cart clicked', { productId, fields, qty });
+    cartStore.api.addItem({ productId, fields, qty });
   };
 
   return (
-    <button
-      type='button'
-      className='rounded transition px-4 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700'
-      onClick={handleClick}
-    >
+    <button className="btn" onClick={handleClick} title={`Add ${qty}`}>
       Add to cart
     </button>
   );

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 const noTrim = (name: string) =>
   z
@@ -8,21 +8,22 @@ const noTrim = (name: string) =>
       `${name} must not contain leading or trailing whitespace`,
     );
 
-export const LayoutPrefsSchema = z.object({
-  showHeader: z.boolean(),
-  showFooter: z.boolean(),
-  showLeftSide: z.boolean(),
-  showRightSide: z.boolean(),
-  showHeaderMenu: z.boolean(),
-});
-export type LayoutPrefs = z.infer<typeof LayoutPrefsSchema>;
+export const literals = <
+  const T extends readonly [string | number, ...(string | number)[]],
+>(
+  values: T,
+) => z.union(values.map((value) => z.literal(value)) as any);
+
+export const pageSizeValues = [25, 50, 100] as const;
+export const PageSizeSchema = literals(pageSizeValues);
+export type PageSize = z.infer<typeof PageSizeSchema>;
 
 export const UserPrefsConfigSchema = z.object({
-  backPort: z.number().int().min(1).max(65535),
-  frontPort: z.number().int().min(1).max(65535),
-  theme: noTrim('theme').min(1).max(256),
-  layout: LayoutPrefsSchema,
+  theme: noTrim("theme").min(1).max(256),
+  productsPerPage: PageSizeSchema,
+  sort: z.enum(["asc", "desc"]).optional(),
 });
+
 export type UserPrefs = z.infer<typeof UserPrefsConfigSchema>;
 
 const AppInfoConfigSchema = z.object({

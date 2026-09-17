@@ -1,5 +1,5 @@
-import { makeFactoryState } from './estate';
-import type { CartItem } from '>/lib/client/types';
+import { makeFactoryState } from "./estate";
+import type { CartItem } from ">/lib/client/types";
 
 type CartState = {
   items: CartItem[];
@@ -9,6 +9,7 @@ export type CartActions = {
   addItem: (item: CartItem) => void;
   removeItem: (item: CartItem) => void;
   updateItem: (item: CartItem) => void;
+  getTotalQuantity: () => number;
   clear: () => void;
 };
 
@@ -81,6 +82,9 @@ export const createCartStore = () => {
         items: [],
       });
     },
+
+    getTotalQuantity: () =>
+      get().items.reduce((sum, item) => sum + item.qty, 0),
   };
 
   type SelectorProps = {

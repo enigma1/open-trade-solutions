@@ -1,9 +1,7 @@
-import cloneDeep from 'lodash-es/cloneDeep';
-import { makeState } from './estate';
-import { userPrefs } from '>/services/utils';
-import { apiClient } from '>/services/api/client';
-import { backPath } from '>/config';
-import type { UserPrefs, LayoutPrefs } from '>/contracts';
+import cloneDeep from "lodash-es/cloneDeep";
+import { makeFactoryState } from "./estate";
+import { defaultUserPrefs } from ">/lib/shared/config";
+import type { UserPrefs } from ">/lib/shared/contracts";
 
 type ConfigStoreState = UserPrefs;
 
@@ -11,54 +9,78 @@ export type ConfigStoreActions = {
   setTheme: (value?: string) => void;
   getPreferences: () => ConfigStoreState;
   savePreferences: (prefs?: Partial<ConfigStoreState>) => void;
-  getLayoutPrefs: () => LayoutPrefs;
-  setLayoutPrefs: (prefs: Partial<LayoutPrefs>) => void;
+  hydratePreferences: (prefs: Partial<ConfigStoreState>) => void;
 };
 
-// type ConfigStore = ConfigStoreState & ConfigStoreActions;
+export type ConfigStore = {
+  useConfigStore: <
+    TSelected = {
+      state: ConfigStoreState;
+      api: ConfigStoreActions;
+    },
+  >(
+    selector?: (args: {
+      state: ConfigStoreState;
+      api: ConfigStoreActions;
+    }) => TSelected,
+  ) => TSelected;
 
-const initialState: ConfigStoreState = userPrefs;
-
-const baseStore = makeState<ConfigStoreState>(() => {
-  apiClient.defaults.baseURL = `${backPath}:${userPrefs.backPort}`;
-  return cloneDeep(initialState);
-});
-const { get, set, setAuto } = baseStore;
-
-export const configStoreActions: ConfigStoreActions = {
-  setTheme: (value) => {
-    const theme = value ?? get().theme;
-    document.documentElement.setAttribute('data-theme', theme);
-    setAuto({ theme });
-  },
-  getLayoutPrefs: () => {
-    return get().layout;
-  },
-  setLayoutPrefs: (prefs) => {
-    set((prev) => ({
-      ...prev,
-      layout: prev.layout,
-      ...prefs,
-    }));
-  },
-  getPreferences: () => {
-    return userPrefs;
-  },
-  savePreferences: (settings?: Partial<ConfigStoreState>) => {
-    const modSettings = settings ?? get();
-    setAuto({ ...modSettings });
-  },
-};
-
-type SelectorProps = {
-  state: ConfigStoreState;
+  get: () => ConfigStoreState;
   api: ConfigStoreActions;
 };
-export const useConfigStore = <TSelected = ConfigStoreState>(
-  selector?: (args: SelectorProps) => TSelected,
-): TSelected => {
-  const state = baseStore();
-  const api = configStoreActions;
-  const store = { state, api };
-  return selector ? selector(store) : (store as TSelected);
+
+export const createConfigStore = (): ConfigStore => {
+  const baseStore = makeFactoryState<ConfigStoreState>(() =>
+    // cloneDeep(userPrefs),
+    cloneDeep(defaultUserPrefs),
+  )();
+
+  const { get, setAuto } = baseStore;
+
+  const api: ConfigStoreActions = {
+    setTheme: (value) => {
+      const theme = value ?? get().theme;
+      document.documentElement.setAttribute("data-theme", theme);
+      setAuto({ theme });
+    },
+
+    getPreferences: () => {
+      return get();
+    },
+
+    savePreferences: (prefs) => {
+      const settings = prefs ?? get();
+      setAuto({ ...settings });
+    },
+    hydratePreferences: (prefs) => {
+      setAuto({
+        ...get(),
+        ...prefs,
+      });
+    },
+  };
+
+  type SelectorProps = {
+    state: ConfigStoreState;
+    api: ConfigStoreActions;
+  };
+
+  const useConfigStore = <TSelected = SelectorProps>(
+    selector?: (args: SelectorProps) => TSelected,
+  ): TSelected => {
+    const state = baseStore();
+
+    const store = {
+      state,
+      api,
+    };
+
+    return selector ? selector(store) : (store as TSelected);
+  };
+
+  return {
+    useConfigStore,
+    get,
+    api,
+  };
 };

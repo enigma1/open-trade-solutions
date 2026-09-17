@@ -1,7 +1,7 @@
 ---
 import type { ProductListType } from ">/lib/shared/types";
 import Button from ">/components/ui/Button.astro";
-import { AddToCartButton } from ">/islands";
+import { AddToCartButton } from ">/Islands";
 const { product: item } = Astro.props;
 
 const { product, special, content } = item;
@@ -51,16 +51,14 @@ interface Props {
   )}
 
   <div class="flex space-x-2 mt-auto border-t border-border pt-4">
-    <AddToCartButton productId={product.products_id} qty={1} client:load>
-      Buy Now
-    </AddToCartButton>
-    <Button
-      size="sm"
-      variant="secondary"
-      class="flex mt-auto"
-      href={`/product?id=${product.products_id}`}
-    >
-      More
-    </Button>
+    {product.has_extra_fields ? (
+      <Button size="sm" href={`/product?id=${product.products_id}`}>
+        Configure
+      </Button>
+    ) : (
+      <AddToCartButton productId={product.products_id} qty={1} client:load>
+        Add to Cart
+      </AddToCartButton>
+    )}
   </div>
 </div>

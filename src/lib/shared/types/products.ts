@@ -9,6 +9,7 @@ type ProductListCoreType = {
   products_image: string;
   products_name: string;
   products_price: number;
+  has_extra_fields?: boolean;
   // [key: string]: unknown; // used for wildcard selection
 };
 type SpecialListCoreType = {

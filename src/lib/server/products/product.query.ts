@@ -1,16 +1,17 @@
-import { initialProductsSelect } from './products.schema';
-import type { BaseTable, QueryContext } from '>/lib/server/query/types';
+import { initialProductsSelect } from "./products.schema";
+import type { BaseTable, QueryContext } from ">/lib/server/query/types";
 import {
   addWhereIn,
   addSelect,
   createQueryContext,
-} from '>/lib/server/query/buildQueryContext';
+} from ">/lib/server/query/buildQueryContext";
+import { getConfig } from ">/lib/server/db/configuration";
 
 export const createProductQueryContext = (
   fromBase: BaseTable,
 ): QueryContext => {
   const ctx = createQueryContext(initialProductsSelect, fromBase);
-  ctx.where.push('p.products_display = 1');
+  ctx.where.push("p.products_display = 1");
   return ctx;
 };
 
@@ -21,32 +22,32 @@ export const applyProductsToCategories = (
   if (!products.length) return;
 
   ctx.joins.set(
-    'p2c',
+    "p2c",
     `
     JOIN products_to_categories p2c
       ON p.products_id = p2c.products_id
     `,
   );
 
-  addWhereIn(ctx, 'p2c.products_id', products);
+  addWhereIn(ctx, "p2c.products_id", products);
 };
 
 export const applyProductsToBrands = (ctx: QueryContext, brands: number[]) => {
   if (!brands.length) return;
 
   ctx.joins.set(
-    'p2b',
+    "p2b",
     `
     JOIN products_to_brands p2b
       ON p.products_id = p2b.products_id
     `,
   );
 
-  addWhereIn(ctx, 'p2b.brands_id', brands);
+  addWhereIn(ctx, "p2b.brands_id", brands);
 };
 
 export const applyProductsIds = (ctx: QueryContext, ids: number[]) => {
-  addWhereIn(ctx, 'p.products_id', ids);
+  addWhereIn(ctx, "p.products_id", ids);
 };
 
 // export const applySpecialsToProducts = (ctx: QueryContext) => {
@@ -74,7 +75,7 @@ export const applyProductsIds = (ctx: QueryContext, ids: number[]) => {
 export const applyProducts = (
   ctx: QueryContext,
   fromAlias: string,
-  alias = 'p',
+  alias = "p",
 ) => {
   ctx.joins.set(
     alias,
@@ -88,7 +89,7 @@ export const applyProducts = (
 export const applySpecials = (
   ctx: QueryContext,
   fromAlias: string,
-  alias = 'sp',
+  alias = "sp",
 ) => {
   ctx.joins.set(
     alias,
@@ -109,7 +110,7 @@ export const applyProductWithSpecials = (
 };
 
 export const applyProductsLanguage = (ctx: QueryContext, languageId = 1) => {
-  const sqlAlias = 'pd';
+  const sqlAlias = "pd";
   ctx.joins.set(
     sqlAlias,
     `
@@ -122,29 +123,50 @@ export const applyProductsLanguage = (ctx: QueryContext, languageId = 1) => {
   addSelect({
     ctx,
     sqlAlias,
-    domainAlias: 'productsDescription',
-    columns: ['products_name', 'products_description'],
+    domainAlias: "productsDescription",
+    columns: ["products_name", "products_description"],
   });
   ctx.params.push(languageId);
 };
 
 export const applyProductsSort = (ctx: QueryContext, sort?: string) => {
   switch (sort) {
-    case 'price_asc':
-      ctx.orderBy = 'p.products_price ASC';
+    case "price_asc":
+      ctx.orderBy = "p.products_price ASC";
       break;
 
-    case 'special_price':
-      applySpecials(ctx, 'p'); // ensures join exists
-      ctx.orderBy = 'sp.special_price ASC';
+    case "special_price":
+      applySpecials(ctx, "p"); // ensures join exists
+      ctx.orderBy = "sp.special_price ASC";
       break;
   }
 };
 
 export const applyFeaturedProductsSort = (ctx: QueryContext, sort?: string) => {
   switch (sort) {
-    case 'sort_order':
-      ctx.orderBy = 'fp.sort_order ASC';
+    case "sort_order":
+      ctx.orderBy = "fp.sort_order ASC";
       break;
   }
+};
+
+export const applyExtraFields = async (
+  ctx: QueryContext,
+  alias: string = "p2pef",
+) => {
+  const useFields = Boolean(await getConfig("products.use_extra_fields"));
+  if (!useFields) return;
+
+  addSelect({
+    ctx,
+    sqlAlias: "p",
+    domainAlias: "product",
+    columns: [
+      `EXISTS (
+        SELECT 1
+        FROM products_to_products_extra_fields ${alias}
+        WHERE ${alias}.products_id = p.products_id
+      ) AS has_extra_fields`,
+    ],
+  });
 };

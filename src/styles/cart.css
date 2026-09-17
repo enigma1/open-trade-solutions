@@ -1,0 +1,19 @@
+@layer components {
+  .cart-link {
+    @apply relative inline-flex items-center justify-center;
+    color: var(--color-text-dim);
+  }
+
+  .cart-link:hover {
+    color: var(--color-text-high);
+  }
+
+  .cart-badge {
+    @apply absolute -top-2 -right-2 flex items-center justify-center rounded-full text-xs font-medium;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding-inline: 0.25rem;
+    background-color: var(--color-error);
+    color: var(--color-text-peak);
+  }
+}
