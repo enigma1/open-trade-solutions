@@ -1,5 +1,5 @@
 import { cartStore } from ">/client/app";
-import type { CartItem } from ">/lib/client";
+import type { CartItem } from ">/lib/shared/types";
 
 export const AddToCartButton = ({ productId, fields, qty }: CartItem) => {
   const handleClick = () => {

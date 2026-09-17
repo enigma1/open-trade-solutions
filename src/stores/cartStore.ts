@@ -1,5 +1,5 @@
 import { makeFactoryState } from "./estate";
-import type { CartItem } from ">/lib/client/types";
+import type { CartItem } from ">/lib/shared/types";
 
 type CartState = {
   items: CartItem[];
