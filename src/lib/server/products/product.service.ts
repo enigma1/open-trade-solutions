@@ -2,7 +2,7 @@ import { queryRows } from ">/lib/server/db";
 import {
   processNestedTablesRequest,
   processNestedTablesSimpleRequest,
-} from ">/lib/server/db/execution";
+} from ">/lib/server/db";
 import { type InitialSelectInput, buildQuery } from ">/lib/server/query";
 import {
   createProductQueryContext,
@@ -31,7 +31,7 @@ import {
   type ProductsQuery,
 } from "./products.schema";
 import { PaginationSchema } from ">/lib/server/shared/pagination";
-import { getConfig } from ">/lib/server/db/configuration";
+import { getConfig } from ">/lib/server/config";
 import type {
   ProductFullType,
   ProductListBaseType,

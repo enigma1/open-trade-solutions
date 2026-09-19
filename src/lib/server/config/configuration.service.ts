@@ -1,5 +1,6 @@
-import { queryRows } from '>/lib/server/db';
-import type { ConfigurationRow } from './types';
+import { queryRows } from ">/lib/server/db";
+import type { ConfigurationRow } from "./types";
+import type { UserPrefs } from ">/lib/shared/contracts";
 
 // Load configuration into memory when server starts
 let configCache: Record<string, string> | null = null;
@@ -30,16 +31,37 @@ type ConfigMultipleKeys<T = Record<string, string>> = {
   [K in keyof T]: string;
 };
 
-export const getConfigMultiple = async (keys: ConfigMultipleKeys) => {
+export const getConfigMultiple = async <T extends Record<string, string>>(
+  keys: T,
+) => {
   const entries = await Promise.all(
     Object.entries(keys).map(async ([rKey, cfgKey]) => {
       const value = await getConfig(cfgKey);
       return [rKey, value] as const;
     }),
   );
-  return Object.fromEntries(entries);
+  return Object.fromEntries(entries) as ConfigMultipleKeys<T>;
 };
 
 export const resetConfigCache = () => {
   configCache = null;
+};
+
+export const getDefaultUserPrefs = async (): Promise<UserPrefs> => {
+  const config = await getConfigMultiple({
+    productsPerPage: "products.page_listing_size",
+    theme: "theme.default",
+    lang: "languages.default",
+    cu: "currencies.default",
+    locale: "locale.default",
+  });
+
+  return {
+    theme: config.theme,
+    productsPerPage: Number(config.productsPerPage),
+    sort: "asc",
+    lang: Number(config.lang),
+    cu: Number(config.cu),
+    locale: config.locale,
+  };
 };

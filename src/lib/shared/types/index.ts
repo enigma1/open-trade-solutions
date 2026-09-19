@@ -2,7 +2,7 @@ export * from "./breadcrumb";
 export * from "./categories";
 export * from "./products";
 export * from "./context";
-export * from "./entities";
+export * from "./core";
 export * from "./errors";
 export * from "./tables";
 export * from "./cart";

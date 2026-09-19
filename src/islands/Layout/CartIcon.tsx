@@ -3,7 +3,11 @@ import { cartStore } from ">/client/app";
 
 const { useCartStore } = cartStore;
 
-export const CartIcon = () => {
+type CartIconProps = {
+  cookiesDisabled?: boolean;
+};
+
+export const CartIcon = ({ cookiesDisabled = false }: CartIconProps) => {
   const { totalQty } = useCartStore(({ api }) => ({
     totalQty: api.getTotalQuantity(),
   }));
@@ -12,6 +16,11 @@ export const CartIcon = () => {
     <a href="/cart" className="cart-link">
       <ShoppingCartIcon size={24} />
       {totalQty > 0 && <span className="cart-badge">{totalQty}</span>}
+      {cookiesDisabled && (
+        <span className="cart-cookie-warning" title="Cookies are disabled">
+          !
+        </span>
+      )}
     </a>
   );
 };

@@ -1,3 +1,1 @@
-export type CheckoutSteps = {
-  checkout: "cart" | "shipping" | "payment" | "confirmation";
-};
+export type CheckoutSteps = "cart" | "shipping" | "payment" | "confirmation";

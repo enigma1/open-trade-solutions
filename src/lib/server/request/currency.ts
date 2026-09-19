@@ -1,23 +1,22 @@
-import { db } from '>/lib/server/db';
-import { getConfig } from '>/lib/server/db/configuration';
-import { CurrencyRow, CurrenciesMap } from './types';
+import { db } from ">/lib/server/db";
+import { getConfig } from ">/lib/server/config";
+import { CurrencyRow, CurrenciesMap } from "./types";
 
 let currenciesCache: CurrenciesMap | null = null;
 
 // Public API
-const resolveCurrency = async (cookieCu: string, paramsCu?: string) => {
+const resolveCurrency = async (paramsCu?: string) => {
   const currencies = await getAllCurrencies();
 
   if (paramsCu && currencies[paramsCu]) return paramsCu;
-  if (cookieCu && currencies[cookieCu]) return cookieCu;
 
-  const defaultCurrencyId = await getConfig('currencies.default');
+  const defaultCurrencyId = await getConfig("currencies.default");
 
   const defaultLanguage = Object.values(currencies).find(
     (cu) => cu.currencies_id === parseInt(defaultCurrencyId, 10),
   );
 
-  return defaultLanguage?.code || Object.keys(currencies)[0] || 'USD';
+  return defaultLanguage?.code || Object.keys(currencies)[0] || "USD";
 };
 
 // const getCurrencyByCode = async (code: string) => {

@@ -16,4 +16,13 @@
     background-color: var(--color-error);
     color: var(--color-text-peak);
   }
+
+  .cart-cookie-warning {
+    @apply absolute -top-2 -left-2 flex items-center justify-center rounded-full text-xs font-bold;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding-inline: 0.25rem;
+    background-color: var(--color-warn);
+    color: var(--color-text-peak);
+  }
 }

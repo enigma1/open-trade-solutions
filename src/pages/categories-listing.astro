@@ -1,24 +1,26 @@
 ---
-import Page from '>/components/Page.astro';
-import Pagination from '>/components/Pagination.astro';
-import Breadcrumb from '>/components/Breadcrumb.astro';
-import { getCategoriesFromRequest } from '>/lib/server/categories';
-import { CategoriesGrid, CategoryGridEmpty } from '>/components/categories';
+import Page from ">/components/Page.astro";
+import Pagination from ">/components/Pagination.astro";
+import Breadcrumb from ">/components/Breadcrumb.astro";
+import { getCategoriesFromRequest } from ">/lib/server/categories";
+import { CategoriesGrid, CategoryGridEmpty } from ">/components/categories";
 import {
   createRequestContext,
   buildCategoriesListingContext,
-} from '>/lib/server/page-context';
-import type { CategoryListType } from '>/lib/shared/types';
-import ListingIntro from '>/components/ListingIntro.astro';
+} from ">/lib/server/page-context";
+import type { CategoryListType } from ">/lib/shared/types";
+import ListingIntro from ">/components/ListingIntro.astro";
 
-// import { buildCategoriesListingContext } from '>/lib/server/categories';
-const { lang, t, url } = await createRequestContext(Astro);
+const ctx = await createRequestContext(Astro);
+const { lang, t, url } = ctx;
+
 const context = await buildCategoriesListingContext(url.searchParams, t);
 const categoriesData = await getCategoriesFromRequest(url.searchParams);
+
 const { data, pagination } = categoriesData;
-// console.log('Categories Data:', data);
 let categories: CategoryListType[] = [];
 const isEmpty = data.length === 0;
+
 if (!isEmpty) {
   categories = data.map((row) => ({
     id: row.category.categories_id,
@@ -26,60 +28,45 @@ if (!isEmpty) {
     name: row.content.categories_name,
   }));
 }
-// if (!isEmpty) {
-//   const ids = data.map((row) => row.category.categories_id);
-//   const descriptions = await getProductsDescriptions(ids);
-//   const map = new Map(descriptions.map((d) => [d.products_id, d]));
-//   products = data.map((row) => ({
-//     ...row,
-// content: {
-//   categories_name: row.category.categories_name,
-//   categories_description: row.category.categories_description,
-//   categories_image: row.category.categories_image,
-// },
-//   }));
-// }
 ---
 
 <Page title={context.title}>
-  {
-    isEmpty ? (
-      <CategoryGridEmpty />
-    ) : (
-      <>
-        <div class='mb-3'>
-          {context.breadcrumb.length > 0 && (
-            <div class='bg-surface-muted px-4 py-2 rounded-md'>
-              <Breadcrumb segments={context.breadcrumb} />
-            </div>
-          )}
-        </div>
-        <div class='mb-3'>
-          {context.type === 'category' && (
-            <ListingIntro
-              title={`Subcategories in ${context?.entity?.name}`}
-              description={context?.entity?.description}
-              image={context?.entity?.image}
-            />
-          )}
+  {isEmpty ? (
+    <CategoryGridEmpty />
+  ) : (
+    <>
+      <div class="mb-3">
+        {context.breadcrumb.length > 0 && (
+          <div class="bg-surface-muted px-4 py-2 rounded-md">
+            <Breadcrumb segments={context.breadcrumb} />
+          </div>
+        )}
+      </div>
+      <div class="mb-3">
+        {context.type === "category" && (
+          <ListingIntro
+            title={`Subcategories in ${context?.entity?.name}`}
+            description={context?.entity?.description}
+            image={context?.entity?.image}
+          />
+        )}
 
-          {context.type === 'brand' && (
-            <ListingIntro
-              title={`Categories from ${context?.entity?.name}`}
-              description={context?.entity?.description}
-              image={context?.entity?.image}
-              align='right'
-            />
-          )}
-        </div>
-        <CategoriesGrid categories={categories} />
-        <Pagination
-          itemsShown={data.length}
-          page={pagination.page}
-          perPage={pagination.perPage}
-          hasMore={pagination.hasMore}
-        />
-      </>
-    )
-  }
+        {context.type === "brand" && (
+          <ListingIntro
+            title={`Categories from ${context?.entity?.name}`}
+            description={context?.entity?.description}
+            image={context?.entity?.image}
+            align="right"
+          />
+        )}
+      </div>
+      <CategoriesGrid categories={categories} />
+      <Pagination
+        itemsShown={data.length}
+        page={pagination.page}
+        perPage={pagination.perPage}
+        hasMore={pagination.hasMore}
+      />
+    </>
+  )}
 </Page>

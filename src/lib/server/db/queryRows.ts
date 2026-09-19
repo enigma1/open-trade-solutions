@@ -1,11 +1,12 @@
-import { db } from './config';
+import { db } from "./config";
+import type { NestedRow } from "./types";
 
-type NestedRow = Record<string, any>;
 type QueryRowProps = {
   query: string;
   params: any[];
   options?: { nestTables?: boolean };
 };
+
 export const queryRows = async <T = NestedRow>({
   query,
   params,

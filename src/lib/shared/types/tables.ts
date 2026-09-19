@@ -1,4 +1,4 @@
-import type { JsonArray } from './entities';
+import type { JsonArray } from "./core";
 
 export type DataRow = JsonArray;
 export type DataRows = DataRow[];

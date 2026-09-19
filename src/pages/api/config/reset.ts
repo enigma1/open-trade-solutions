@@ -1,4 +1,4 @@
-import { resetConfigCache } from '@/lib/server/db/configuration';
+import { resetConfigCache } from ">/lib/server/config";
 
 export const POST = async () => {
   resetConfigCache();

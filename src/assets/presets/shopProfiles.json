@@ -1,0 +1,17 @@
+{
+  "111": {
+    "lang": "English",
+    "cu": "USD",
+    "locale": "en-US"
+  },
+  "222": {
+    "lang": "Spanish",
+    "cu": "EUR",
+    "locale": "es-ES"
+  },
+  "333": {
+    "lang": "French",
+    "cu": "EUR",
+    "locale": "fr-FR"
+  }
+}

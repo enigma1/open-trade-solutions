@@ -5,7 +5,7 @@ import {
   addSelect,
   createQueryContext,
 } from ">/lib/server/query/buildQueryContext";
-import { getConfig } from ">/lib/server/db/configuration";
+import { getConfig } from ">/lib/server/config";
 
 export const createProductQueryContext = (
   fromBase: BaseTable,

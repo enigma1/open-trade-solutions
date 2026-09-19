@@ -1,9 +1,7 @@
-import { type QueryContext } from '>/lib/server/query/types';
-import { buildQuery } from '>/lib/server/query';
-import { queryRows } from '>/lib/server/db';
-import { transformData } from '>/lib/server/shared/transformers';
-import type { InitialSelectInput } from '>/lib/server/query/types';
-import { type GetResultsFromRequest } from './types';
+import { type QueryContext, buildQuery } from ">/lib/server/query";
+import { queryRows } from ">/lib/server/db";
+import { transformData } from ">/lib/server/shared/transformers";
+import { type GetResultsFromRequest } from "./types";
 
 type ProcessNestedTablesRequestProps = {
   ctx: QueryContext;
@@ -31,9 +29,9 @@ export const processNestedTablesRequest = async <
   });
   const hasMore = rows.length > pagination.perPage;
   const data = hasMore ? rows.slice(0, pagination.perPage) : rows;
-  const productsData = transformData<T>(data, ctx.select);
+  const transformedData = transformData<T>(data, ctx.select);
   return {
-    data: productsData,
+    data: transformedData,
     pagination: {
       page: pagination.page,
       perPage: pagination.perPage,

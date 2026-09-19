@@ -1,6 +1,6 @@
-import { db, queryRows } from '>/lib/server/db';
-import { getConfig } from '>/lib/server/db/configuration';
-import type { LanguageStringsRow, LanguageRow, LanguagesMap } from './types';
+import { db, queryRows } from ">/lib/server/db";
+import { getConfig } from ">/lib/server/config";
+import type { LanguageStringsRow, LanguageRow, LanguagesMap } from "./types";
 
 const stringsCache: Record<string, Record<string, string>> = {};
 let languagesCache: LanguagesMap | null = null;
@@ -9,7 +9,7 @@ const createTranslator = (strings: Record<string, string>) => {
   return (key: string, vars: Record<string, string> = {}) => {
     const template = strings[key] || key;
     return template.replace(/{{(.*?)}}/g, (_, k) => {
-      return vars[k.trim()] ?? '';
+      return vars[k.trim()] ?? "";
     });
   };
 };
@@ -32,18 +32,17 @@ const getTranslatorById = async (languageId: number) => {
   return createTranslator(stringsCache[languageId]);
 };
 
-const resolveLanguage = async (cookieLang?: string, paramsLang?: string) => {
+const resolveLanguage = async (paramsLang?: string) => {
   const languages = await getAllLanguages();
   if (paramsLang && languages[paramsLang]) return paramsLang;
-  if (cookieLang && languages[cookieLang]) return cookieLang;
 
-  const defaultLanguageId = await getConfig('languages.default');
+  const defaultLanguageId = await getConfig("languages.default");
 
   const defaultLanguage = Object.values(languages).find(
     (l) => l.languages_id === parseInt(defaultLanguageId, 10),
   );
 
-  return defaultLanguage?.code || Object.keys(languages)[0] || 'en';
+  return defaultLanguage?.code || Object.keys(languages)[0] || "en";
 };
 
 const getLanguageByCode = async (code: string) => {

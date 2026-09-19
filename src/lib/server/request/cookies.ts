@@ -1,43 +1,83 @@
-import { getConfigMultiple } from '>/lib/server/db/configuration';
-import type { StoreContext } from './types';
+import { AstroCookies } from "astro";
+import {
+  PROBE_COOKIE_ID,
+  PROBE_COOKIE_LIFETIME,
+  SHOP_COOKIE_ID,
+  SHOP_COOKIE_LIFETIME,
+  REDIRECT_MARKER,
+  getEnvKey,
+} from ">/lib/server/config";
+import {
+  randomBytes,
+  randomUUID,
+  createHmac,
+  timingSafeEqual,
+} from "node:crypto";
 
-export const STORE_CONTEXT_COOKIE = 'store_context';
-export const STORE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
+// Used for the probe cookie to detect whether the browser is storing cookies.
+// The probe cookie is signed by this PROBE_SECRET so it cannot be fabricated by the client.
+// Use a random string for the PROBE_SECRET in production inside the .env, and keep it secret.
+const PROBE_SECRET = getEnvKey("PROBE_SECRET") ?? "-";
 
-export const getCookie = (request: Request, name: string) => {
-  const cookieHeader = request.headers.get('cookie');
-  if (!cookieHeader) return null;
+export const createProbeCookieSignature = (): string => {
+  const nonce = randomBytes(32).toString("base64url");
 
-  const cookies = Object.fromEntries(
-    cookieHeader.split('; ').map((c) => {
-      const [key, ...rest] = c.split('=');
-      return [key, rest.join('=')];
-    }),
-  );
+  const signature = createHmac("sha256", PROBE_SECRET)
+    .update(nonce)
+    .digest("base64url");
 
-  return cookies[name] ?? null;
+  return `${nonce}.${signature}`;
 };
 
-// 'store_context';
-export const getCookieContext = (
-  request: Request,
-  context: string = STORE_CONTEXT_COOKIE,
-): Record<string, string> | null => {
-  const raw = getCookie(request, context);
-  if (!raw) return null;
+export const createShopCookieSignature = (): string => {
+  const newSessionId = randomUUID();
+  return newSessionId;
+};
 
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
+// Validate the probe cookie received
+export const verifyProbeCookieSignature = (value: string): boolean => {
+  const [nonce, signature] = value.split(".");
+
+  if (!nonce || !signature) {
+    return false;
   }
+
+  const expected = createHmac("sha256", PROBE_SECRET).update(nonce).digest();
+  const actual = Buffer.from(signature, "base64url");
+  return actual.length === expected.length && timingSafeEqual(actual, expected);
 };
 
-export const getDefaultCookieContext = async () => {
-  const defaultContext = await getConfigMultiple({
-    lang: 'languages.default',
-    cu: 'currencies.default',
-    locale: 'locale.default',
+// Create a redirection URL with a marker to detect if visitor can accept cookies.
+export const createRedirection = (url: URL): string => {
+  const next = new URL(url);
+  next.searchParams.set(REDIRECT_MARKER, "1");
+  return `${next.pathname}${next.search}`;
+};
+
+// Seth the probe cookie
+export const setProbeCookie = (cookies: AstroCookies) => {
+  cookies.set(PROBE_COOKIE_ID, createProbeCookieSignature(), {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: PROBE_COOKIE_LIFETIME,
   });
-  return defaultContext as StoreContext;
+};
+
+// Set the session cookie for the shop
+export const setShopCookie = (cookies: AstroCookies, sessionId: string) => {
+  cookies.set(SHOP_COOKIE_ID, sessionId, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: SHOP_COOKIE_LIFETIME,
+  });
+};
+
+export const deleteCookie = (cookies: AstroCookies, cookieId: string) => {
+  cookies.delete(cookieId, {
+    path: "/",
+  });
 };
