@@ -7,10 +7,10 @@ const cookiesDisabled = Astro.locals.cookiesDisabled === true;
 ---
 
 <BaseLayout title={title}>
-  <div class='min-h-screen flex flex-col'>
+  <div class="min-h-screen flex flex-col">
     <Header cookiesDisabled={cookiesDisabled} />
-    <main class='w-full mx-auto px-4 grow'>
-      <div class='mx-auto max-w-7xl py-4'>
+    <main class="w-full mx-auto px-4 grow">
+      <div class="mx-auto max-w-7xl py-4">
         <slot />
       </div>
     </main>

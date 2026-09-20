@@ -1,1 +1,1 @@
-export type ErrorTypes = "auth" | "schema" | "server" | "unknown";
+export type ErrorTypes = 'auth' | 'schema' | 'server' | 'unknown';

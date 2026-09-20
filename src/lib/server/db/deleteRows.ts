@@ -1,6 +1,6 @@
-import { type ResultSetHeader, escapeId } from "mysql2";
-import type { SqlTypes, WhereCondition } from "./types";
-import { db } from "./config";
+import { type ResultSetHeader, escapeId } from 'mysql2';
+import type { SqlTypes, WhereCondition } from './types';
+import { db } from './config';
 
 type DeleteRowsProps = {
   table: string;
@@ -27,7 +27,7 @@ export const deleteRows = async ({
 
   const sql = `
     DELETE FROM ${escapedTable}
-    WHERE ${whereClauses.join(" AND ")}
+    WHERE ${whereClauses.join(' AND ')}
   `;
 
   await db.query<ResultSetHeader>({

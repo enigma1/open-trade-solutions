@@ -1,5 +1,5 @@
-import { getSessionData } from ">/lib/server/sessions";
-import { getDefaultUserPrefs } from ">/lib/server/config";
+import { getSessionData } from '>/lib/server/sessions';
+import { getDefaultUserPrefs } from '>/lib/server/config';
 
 export const calculatePageNumber = (offset: number, limit: number) => {
   if (

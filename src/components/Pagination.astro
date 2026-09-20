@@ -1,6 +1,6 @@
 ---
-import { ChevronLeft, ChevronRight } from "lucide-astro";
-import { calculatePageNumber } from ">/lib/server/page-listings";
+import { ChevronLeft, ChevronRight } from 'lucide-astro';
+import { calculatePageNumber } from '>/lib/server/page-listings';
 const { offset, limit, hasNext, hasPrevious, itemsShown } = Astro.props;
 const page = calculatePageNumber(offset, limit);
 ---

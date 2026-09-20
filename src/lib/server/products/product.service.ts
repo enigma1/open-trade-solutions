@@ -1,9 +1,9 @@
-import { queryRows } from ">/lib/server/db";
+import { queryRows } from '>/lib/server/db';
 import {
   processNestedTablesRequest,
   processNestedTablesSimpleRequest,
-} from ">/lib/server/db";
-import { type InitialSelectInput, buildQuery } from ">/lib/server/query";
+} from '>/lib/server/db';
+import { type InitialSelectInput, buildQuery } from '>/lib/server/query';
 import {
   createProductQueryContext,
   applyProductsSort,
@@ -14,14 +14,15 @@ import {
   applyProductWithSpecials,
   applyFeaturedProductsSort,
   applyProductsLanguage,
-  applyExtraFields,
-} from "./product.query";
-import { applyCategoriesToProducts } from ">/lib/server/categories/categories.query";
+  applyHasProductExtraFields,
+  applyProductToProductsExtraFields,
+} from './product.query';
+import { applyCategoriesToProducts } from '>/lib/server/categories/categories.query';
 import {
   buildQueryContext,
   createQueryContext,
-} from ">/lib/server/query/buildQueryContext";
-import { getPage, getLimitOffset } from ">/lib/server/page-listings";
+} from '>/lib/server/query/buildQueryContext';
+import { getPage, getLimitOffset } from '>/lib/server/page-listings';
 import {
   initialProductBreadcrumbSelect,
   initialProductInfoSelect,
@@ -29,24 +30,27 @@ import {
   initialProductsOnlySelect,
   ProductsQuerySchema,
   type ProductsQuery,
-} from "./products.schema";
-import { getConfig } from ">/lib/server/config";
+} from './products.schema';
+import { getConfig } from '>/lib/server/config';
 import type {
   ProductFullType,
   ProductListBaseType,
   ProductBreadcrumbType,
-} from ">/lib/shared/types";
-import { isEmptyObject } from ">/lib/shared/utils";
+} from '>/lib/shared/types';
+import { isEmptyObject } from '>/lib/shared/utils';
 
-import type { ProductInfoRow } from "./types";
-import { initialCategoriesBreadcrumbSelect } from ">/lib/server/categories/categories.schema";
+import type { ProductInfoRow } from './types';
+import { initialCategoriesBreadcrumbSelect } from '>/lib/server/categories/categories.schema';
 
 export const getProductById = async (
   id: number,
 ): Promise<ProductInfoRow | null> => {
-  const ctx = createProductQueryContext({ table: "products", alias: "p" });
+  const ctx = await createProductQueryContext({
+    table: 'products',
+    alias: 'p',
+  });
   applyProductsIds(ctx, [id]);
-  applySpecials(ctx, "p");
+  applySpecials(ctx, 'p');
   const { query, params } = buildQuery({
     ctx,
   });
@@ -77,12 +81,12 @@ export const buildProductQueryContext = async (
   initialSelect: InitialSelectInput,
 ) => {
   const raw = Object.fromEntries(params.entries());
-  const isMixed = "categories" in raw && "brands" in raw;
+  const isMixed = 'categories' in raw && 'brands' in raw;
   const page = getPage(raw.page);
   const pagination = await getLimitOffset(page);
   // It builds pagination on the return object fix it.
   const { ctx, query } = buildQueryContext<ProductsQuery>({
-    fromBase: { table: "products", alias: "p" },
+    fromBase: { table: 'products', alias: 'p' },
     params,
     schema: ProductsQuerySchema.pick({
       categories: true,
@@ -92,12 +96,12 @@ export const buildProductQueryContext = async (
     features: [
       (ctx, q) => applyCategoriesToProducts(ctx, q.categories),
       (ctx, q) => applyProductsToBrands(ctx, q.brands),
-      (ctx) => applySpecials(ctx, "p"),
+      (ctx) => applySpecials(ctx, 'p'),
       (ctx, q) => applyProductsSort(ctx, q.sort),
     ],
     initialSelect,
   });
-  ctx.where.push("p.products_display = 1");
+  ctx.where.push('p.products_display = 1');
   // after features applied
   ctx.nestTables = ctx.joins.size > 0;
   return {
@@ -129,7 +133,7 @@ export const buildSpecialProductsQueryContext = async (
   const page = getPage(raw.page);
   const pagination = await getLimitOffset(page);
   const { ctx, query } = buildQueryContext<ProductsQuery>({
-    fromBase: { table: "products_specials", alias: "sp" },
+    fromBase: { table: 'products_specials', alias: 'sp' },
     params,
     schema: ProductsQuerySchema.pick({
       categories: true,
@@ -137,14 +141,14 @@ export const buildSpecialProductsQueryContext = async (
       sort: true,
     }),
     features: [
-      (ctx) => applyProducts(ctx, "sp"),
+      (ctx) => applyProducts(ctx, 'sp'),
       (ctx, q) => applyCategoriesToProducts(ctx, q.categories),
       (ctx, q) => applyProductsToBrands(ctx, q.brands),
       (ctx, q) => applyProductsSort(ctx, q.sort),
     ],
     initialSelect,
   });
-  ctx.where.push("p.products_display = 1");
+  ctx.where.push('p.products_display = 1');
   // after features applied
   ctx.nestTables = ctx.joins.size > 0;
   return {
@@ -155,7 +159,7 @@ export const buildSpecialProductsQueryContext = async (
 };
 
 export const getFeaturedProducts = async () => {
-  const count = Number(await getConfig("products.featured_listing_size"));
+  const count = Number(await getConfig('products.featured_listing_size'));
   if (!count) return [];
 
   const { ctx } = buildFeaturedProductsQueryContext(count);
@@ -166,29 +170,39 @@ export const getFeaturedProducts = async () => {
 
 export const buildFeaturedProductsQueryContext = (count: number) => {
   const ctx = createQueryContext(initialProductsOnlySelect, {
-    table: "products_featured",
-    alias: "fp",
+    table: 'products_featured',
+    alias: 'fp',
   });
-  applyProductWithSpecials(ctx, "fp");
-  applyExtraFields(ctx);
-  applyFeaturedProductsSort(ctx, "fp");
-  ctx.where.push("fp.status = 1");
-  ctx.where.push("p.products_display = 1");
-  ctx.orderBy = "fp.sort_order ASC";
+  applyProductWithSpecials(ctx, 'fp');
+  applyHasProductExtraFields(ctx);
+  applyFeaturedProductsSort(ctx, 'fp');
+  ctx.where.push('fp.status = 1');
+  ctx.where.push('p.products_display = 1');
+  ctx.orderBy = 'fp.sort_order ASC';
   ctx.limit = count;
   ctx.nestTables = ctx.joins.size > 0;
   return { ctx };
 };
 
 export const getProductInfoById = async (id: number) => {
+  const useFields = Boolean(await getConfig('products.use_extra_fields'));
   const ctx = createQueryContext(initialProductInfoSelect, {
-    table: "products",
-    alias: "p",
+    table: 'products',
+    alias: 'p',
   });
-  applySpecials(ctx, "p");
+
+  ctx.ignoredTables = [];
+  if (!useFields) {
+    ctx.ignoredTables.push(
+      ...['products_extra_fields', 'products_to_products_extra_fields'],
+    );
+  }
+  applySpecials(ctx, 'p');
   applyProductsLanguage(ctx);
-  ctx.where.push("p.products_display = 1");
-  ctx.where.push("p.products_id = ?");
+  applyProductToProductsExtraFields(ctx, 'p');
+
+  ctx.where.push('p.products_display = 1');
+  ctx.where.push('p.products_id = ?');
   ctx.params.push(id);
   ctx.limit = 1;
   ctx.nestTables = ctx.joins.size > 0;
@@ -200,13 +214,13 @@ export const getProductInfoById = async (id: number) => {
 
 export const getProductForBreadcrumb = async (id: number) => {
   const ctx = createQueryContext(initialProductBreadcrumbSelect, {
-    table: "products",
-    alias: "p",
+    table: 'products',
+    alias: 'p',
   });
 
   applyProductsLanguage(ctx, 1);
-  ctx.where.push("p.products_display = 1");
-  ctx.where.push("p.products_id = ?");
+  ctx.where.push('p.products_display = 1');
+  ctx.where.push('p.products_id = ?');
   ctx.params.push(id);
   ctx.limit = 1;
   ctx.nestTables = ctx.joins.size > 0;

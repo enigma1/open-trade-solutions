@@ -1,18 +1,18 @@
 ---
-import Page from ">/components/Page.astro";
-import Pagination from ">/components/Pagination.astro";
-import Breadcrumb from ">/components/Breadcrumb.astro";
-import ProductGridCard from ">/components/products/ProductGridCard.astro";
-import ProductGridEmpty from ">/components/products/ProductGridEmpty.astro";
-import { getProductsFromRequest } from ">/lib/server/products/product.service";
-import { indexBy } from ">/lib/shared/utils";
-import type { ProductListType } from ">/lib/shared/types";
-import { getProductsDescriptions } from ">/lib/server/products/product.repo";
+import Page from '>/components/Page.astro';
+import Pagination from '>/components/Pagination.astro';
+import Breadcrumb from '>/components/Breadcrumb.astro';
+import ProductGridCard from '>/components/products/ProductGridCard.astro';
+import ProductGridEmpty from '>/components/products/ProductGridEmpty.astro';
+import { getProductsFromRequest } from '>/lib/server/products/product.service';
+import { indexBy } from '>/lib/shared/utils';
+import type { ProductListType } from '>/lib/shared/types';
+import { getProductsDescriptions } from '>/lib/server/products/product.repo';
 import {
   createRequestContext,
   buildProductListingContext,
-} from ">/lib/server/page-context";
-import ListingIntro from ">/components/ListingIntro.astro";
+} from '>/lib/server/page-context';
+import ListingIntro from '>/components/ListingIntro.astro';
 
 // Mocked data
 // import { productsGrid } from '@/data/';
@@ -31,9 +31,9 @@ if (!isEmpty) {
   products = items.map((row) => ({
     ...row,
     content: {
-      products_name: map.get(row.product.products_id)?.products_name ?? "",
+      products_name: map.get(row.product.products_id)?.products_name ?? '',
       products_description:
-        map.get(row.product.products_id)?.products_description ?? "",
+        map.get(row.product.products_id)?.products_description ?? '',
     },
   }));
 }
@@ -52,7 +52,7 @@ if (!isEmpty) {
         )}
       </div>
       <div class="mb-3">
-        {context.type === "category" && (
+        {context.type === 'category' && (
           <ListingIntro
             title={`Products in ${context?.entity?.name}`}
             description={context?.entity?.description}
@@ -60,7 +60,7 @@ if (!isEmpty) {
           />
         )}
 
-        {context.type === "brand" && (
+        {context.type === 'brand' && (
           <ListingIntro
             title={`Products from ${context?.entity?.name}`}
             description={context?.entity?.description}

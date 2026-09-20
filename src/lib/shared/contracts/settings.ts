@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { PageSizeSchema } from ">/lib/server/contracts";
+import { z } from 'zod';
+import { PageSizeSchema } from '>/lib/server/contracts';
 
 const noTrim = (name: string) =>
   z
@@ -10,12 +10,12 @@ const noTrim = (name: string) =>
     );
 
 export const UserPrefsSchema = z.object({
-  theme: noTrim("theme").min(1).max(256),
+  theme: noTrim('theme').min(1).max(256),
   itemsPerPage: PageSizeSchema,
-  sort: z.enum(["asc", "desc"]).optional(),
+  sort: z.enum(['asc', 'desc']).optional(),
   cu: z.number().int().positive(),
   lang: z.number().int().positive(),
-  locale: noTrim("locale").min(2).max(16),
+  locale: noTrim('locale').min(2).max(16),
 });
 
 export type UserPrefs = z.infer<typeof UserPrefsSchema>;

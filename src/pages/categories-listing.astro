@@ -1,15 +1,15 @@
 ---
-import Page from ">/components/Page.astro";
-import Pagination from ">/components/Pagination.astro";
-import Breadcrumb from ">/components/Breadcrumb.astro";
-import { getCategoriesFromRequest } from ">/lib/server/categories";
-import { CategoriesGrid, CategoryGridEmpty } from ">/components/categories";
+import Page from '>/components/Page.astro';
+import Pagination from '>/components/Pagination.astro';
+import Breadcrumb from '>/components/Breadcrumb.astro';
+import { getCategoriesFromRequest } from '>/lib/server/categories';
+import { CategoriesGrid, CategoryGridEmpty } from '>/components/categories';
 import {
   createRequestContext,
   buildCategoriesListingContext,
-} from ">/lib/server/page-context";
-import type { CategoryListType } from ">/lib/shared/types";
-import ListingIntro from ">/components/ListingIntro.astro";
+} from '>/lib/server/page-context';
+import type { CategoryListType } from '>/lib/shared/types';
+import ListingIntro from '>/components/ListingIntro.astro';
 
 const ctx = await createRequestContext(Astro);
 const { lang, t, url } = ctx;
@@ -43,7 +43,7 @@ if (!isEmpty) {
         )}
       </div>
       <div class="mb-3">
-        {context.type === "category" && (
+        {context.type === 'category' && (
           <ListingIntro
             title={`Subcategories in ${context?.entity?.name}`}
             description={context?.entity?.description}
@@ -51,7 +51,7 @@ if (!isEmpty) {
           />
         )}
 
-        {context.type === "brand" && (
+        {context.type === 'brand' && (
           <ListingIntro
             title={`Categories from ${context?.entity?.name}`}
             description={context?.entity?.description}

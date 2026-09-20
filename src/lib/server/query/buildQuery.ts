@@ -1,38 +1,38 @@
-import type { QueryContext } from "./types";
-import type { PaginationParams } from ">/lib/server/data";
-import { trimTail } from ">/lib/shared/utils";
+import type { QueryContext } from './types';
+import type { PaginationRequest } from '>/lib/server/page-listings';
+import { trimTail } from '>/lib/shared/utils';
 
 type BuildQueryProps = {
   ctx: QueryContext;
-  pagination?: PaginationParams;
+  pagination?: PaginationRequest;
 };
 export const buildQuery = ({ ctx, pagination }: BuildQueryProps) => {
   const params = [...ctx.params];
-  let selectClause = "";
+  let selectClause = '';
 
-  if (ctx.mode === "count") {
-    selectClause = "COUNT(*) AS total";
+  if (ctx.mode === 'count') {
+    selectClause = 'COUNT(*) AS total';
   } else {
     for (const { sqlAlias, columns } of ctx.select.values()) {
-      const cols = columns.has("*")
+      const cols = columns.has('*')
         ? `${sqlAlias}.*`
         : Array.from(columns)
             .map((col) => `${sqlAlias}.${col}`)
-            .join(", ");
+            .join(', ');
 
-      selectClause += cols + ", ";
+      selectClause += cols + ', ';
     }
-    selectClause = trimTail(selectClause, ",");
+    selectClause = trimTail(selectClause, ',');
   }
 
   // let query = `SELECT ${selectClause} FROM ${base.table} ${base.alias}`;
   let query = `SELECT ${selectClause} FROM ${ctx.fromBase.table} ${ctx.fromBase.alias}`;
   // joins
-  query += Array.from(ctx.joins.values()).join("\n");
+  query += Array.from(ctx.joins.values()).join('\n');
 
   // where
   if (ctx.where.length) {
-    query += " WHERE " + ctx.where.join(" AND ");
+    query += ' WHERE ' + ctx.where.join(' AND ');
   }
 
   // order
@@ -41,11 +41,11 @@ export const buildQuery = ({ ctx, pagination }: BuildQueryProps) => {
   }
 
   // pagination
-  if (ctx.mode === "rows" && pagination) {
-    query += " LIMIT ? OFFSET ?";
+  if (ctx.mode === 'rows' && pagination) {
+    query += ' LIMIT ? OFFSET ?';
     params.push(pagination.limit, pagination.offset);
-  } else if (ctx.mode === "rows" && ctx.limit) {
-    query += " LIMIT ?";
+  } else if (ctx.mode === 'rows' && ctx.limit) {
+    query += ' LIMIT ?';
     params.push(ctx.limit);
   }
 

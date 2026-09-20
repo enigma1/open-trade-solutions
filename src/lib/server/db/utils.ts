@@ -1,6 +1,6 @@
-import { escapeId } from "mysql2";
-import { db } from "./config";
-import { SqlColumn, SqlColumnQuery } from "./types";
+import { escapeId } from 'mysql2';
+import { db } from './config';
+import { SqlColumn, SqlColumnQuery } from './types';
 
 type GetRealColumnsProps = {
   table: string;
@@ -13,7 +13,7 @@ export const getRealColumns = async ({
   );
 
   return cols
-    .filter((col) => !col.Extra?.toUpperCase().includes("GENERATED"))
+    .filter((col) => !col.Extra?.toUpperCase().includes('GENERATED'))
     .map((col) => ({
       Field: col.Field,
       Type: col.Type,

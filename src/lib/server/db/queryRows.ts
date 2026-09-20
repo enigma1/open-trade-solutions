@@ -1,5 +1,5 @@
-import { db } from "./config";
-import type { NestedRow } from "./types";
+import { db } from './config';
+import type { NestedRow } from './types';
 
 type QueryRowProps = {
   query: string;

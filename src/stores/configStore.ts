@@ -1,7 +1,7 @@
-import cloneDeep from "lodash-es/cloneDeep";
-import { makeFactoryState } from "./estate";
-import { defaultUserPrefs } from ">/lib/shared/config";
-import type { UserPrefs } from ">/lib/shared/contracts";
+import cloneDeep from 'lodash-es/cloneDeep';
+import { makeFactoryState } from './estate';
+import { defaultUserPrefs } from '>/lib/shared/config';
+import type { UserPrefs } from '>/lib/shared/contracts';
 
 type ConfigStoreState = UserPrefs;
 
@@ -40,7 +40,7 @@ export const createConfigStore = (): ConfigStore => {
   const api: ConfigStoreActions = {
     setTheme: (value) => {
       const theme = value ?? get().theme;
-      document.documentElement.setAttribute("data-theme", theme);
+      document.documentElement.setAttribute('data-theme', theme);
       setAuto({ theme });
     },
 

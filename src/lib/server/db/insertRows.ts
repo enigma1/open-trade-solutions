@@ -1,9 +1,9 @@
-import { type ResultSetHeader, escapeId } from "mysql2";
-import { appErrors } from ">/lib/server/errors";
-import { db } from "./config";
-import { getRealColumns } from "./utils";
-import { remapSqlValue, transformSqlValue } from "./remap";
-import type { SqlTypes, SqlRows } from "./types";
+import { type ResultSetHeader, escapeId } from 'mysql2';
+import { appErrors } from '>/lib/server/errors';
+import { db } from './config';
+import { getRealColumns } from './utils';
+import { remapSqlValue, transformSqlValue } from './remap';
+import type { SqlTypes, SqlRows } from './types';
 
 type InsertRowsProps = {
   table: string;
@@ -39,7 +39,7 @@ export const insertRows = async ({
     if (!column) {
       // Generate a domain error
       throw appErrors.server({
-        message: "invalid_table_column",
+        message: 'invalid_table_column',
         details: [
           `Cannot insert into table with unknown column: ${columnName}`,
         ],
@@ -53,7 +53,7 @@ export const insertRows = async ({
 
   const escapedColumns = columns
     .map((column) => escapeId(column.Field))
-    .join(", ");
+    .join(', ');
 
   const params: SqlTypes[] = [];
 
@@ -64,9 +64,9 @@ export const insertRows = async ({
         params.push(transformSqlValue(column.Type, value));
         return remapSqlValue(column.Type);
       });
-      return `(${placeholders.join(", ")})`;
+      return `(${placeholders.join(', ')})`;
     })
-    .join(", ");
+    .join(', ');
 
   const sql = `INSERT INTO ${escapedTable} (${escapedColumns}) VALUES ${valuesSql}`;
 

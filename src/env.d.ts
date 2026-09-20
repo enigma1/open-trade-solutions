@@ -1,4 +1,4 @@
-import type { SessionRow } from ">/lib/server/sessions/types";
+import type { SessionRow } from '>/lib/server/sessions/types';
 
 // Need this global namespace for Astro Locals interface to pass custom properties to the application
 // File needs to be at the same level as middleware.ts

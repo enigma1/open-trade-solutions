@@ -1,6 +1,6 @@
-import { queryRows } from ">/lib/server/db";
-import type { ConfigurationRow } from "./types";
-import type { UserPrefs } from ">/lib/shared/contracts";
+import { queryRows } from '>/lib/server/db';
+import type { ConfigurationRow } from './types';
+import type { UserPrefs } from '>/lib/shared/contracts';
 
 // Load configuration into memory when server starts
 let configCache: Record<string, string> | null = null;
@@ -49,17 +49,17 @@ export const resetConfigCache = () => {
 
 export const getDefaultUserPrefs = async (): Promise<UserPrefs> => {
   const config = await getConfigMultiple({
-    itemsPerPage: "listing.page_listing_size",
-    theme: "theme.default",
-    lang: "languages.default",
-    cu: "currencies.default",
-    locale: "locale.default",
+    itemsPerPage: 'listing.page_listing_size',
+    theme: 'theme.default',
+    lang: 'languages.default',
+    cu: 'currencies.default',
+    locale: 'locale.default',
   });
 
   return {
     theme: config.theme,
     itemsPerPage: Number(config.itemsPerPage),
-    sort: "asc",
+    sort: 'asc',
     lang: Number(config.lang),
     cu: Number(config.cu),
     locale: config.locale,

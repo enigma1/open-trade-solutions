@@ -79,6 +79,20 @@ export const initialProductInfoSelect = {
   },
 };
 
+export const initialProductInfoFieldsSelect = {
+  ...initialProductInfoSelect,
+  p2pef: {
+    sqlAlias: 'p2pef',
+    domainAlias: 'extraFields',
+    columns: ['*'],
+  },
+  pef: {
+    sqlAlias: 'pef',
+    domainAlias: 'extraFieldsContent',
+    columns: ['products_extra_fields_name', 'fields_configuration'],
+  },
+};
+
 export const initialProductBreadcrumbSelect = {
   p: {
     sqlAlias: 'p',

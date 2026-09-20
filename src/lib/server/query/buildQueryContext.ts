@@ -3,7 +3,7 @@ import type {
   SelectGroup,
   QueryContext,
   BaseTable,
-} from "./types";
+} from './types';
 
 export type InitialSelect = Record<string, SelectGroup>;
 export type SelectMap = Record<string, string[]>;
@@ -27,21 +27,22 @@ export const createQueryContext = (
     joins: new Map(),
     where: [],
     params: [],
-    mode: "rows",
+    mode: 'rows',
     nestTables: false,
     fromBase,
+    ignoredTables: [],
   };
 };
 
 export const applyCount = (ctx: QueryContext) => {
-  ctx.mode = "count";
+  ctx.mode = 'count';
   ctx.select.clear(); // wipe row selects
 };
 
 const addColumn = (group: SelectGroup, col: string) => {
-  if (col === "*") {
+  if (col === '*') {
     group.columns.clear();
-    group.columns.add("*");
+    group.columns.add('*');
     return;
   }
 
@@ -88,12 +89,12 @@ export const addWhereIn = (
 
   if (!uniques.length) {
     if (values.length > 0) {
-      ctx.where.push("1=0"); // force empty result
+      ctx.where.push('1=0'); // force empty result
     }
     return;
   }
 
-  ctx.where.push(`${column} IN (${uniques.map(() => "?").join(",")})`);
+  ctx.where.push(`${column} IN (${uniques.map(() => '?').join(',')})`);
   ctx.params.push(...uniques);
 };
 

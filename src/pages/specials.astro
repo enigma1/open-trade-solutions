@@ -1,17 +1,17 @@
 ---
-import Page from ">/components/Page.astro";
-import Pagination from ">/components/Pagination.astro";
-import ProductGridCard from ">/components/products/ProductGridCard.astro";
+import Page from '>/components/Page.astro';
+import Pagination from '>/components/Pagination.astro';
+import ProductGridCard from '>/components/products/ProductGridCard.astro';
 import {
   getProductsDescriptions,
   getSpecialProductsFromRequest,
-} from ">/lib/server/products";
-import type { ProductListType } from ">/lib/shared/types";
+} from '>/lib/server/products';
+import type { ProductListType } from '>/lib/shared/types';
 
 // Mocked data
 // import { productsGrid } from '@/data/';
 const url = new URL(Astro.request.url);
-const q = url.searchParams.get("q");
+const q = url.searchParams.get('q');
 const productsData = await getSpecialProductsFromRequest(
   new URL(Astro.request.url).searchParams,
 );
@@ -27,16 +27,16 @@ if (!isEmpty) {
     ...row,
     content: {
       ...row.product,
-      products_name: map.get(row.product.products_id)?.products_name ?? "",
+      products_name: map.get(row.product.products_id)?.products_name ?? '',
       products_description:
-        map.get(row.product.products_id)?.products_description ?? "",
+        map.get(row.product.products_id)?.products_description ?? '',
     },
   }));
 }
 
 const title = isEmpty
-  ? "No Deals Found"
-  : `Specials Dealsin ${q ?? "All Deals"}`;
+  ? 'No Deals Found'
+  : `Specials Dealsin ${q ?? 'All Deals'}`;
 ---
 
 <Page title={title}>

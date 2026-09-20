@@ -1,17 +1,27 @@
-import { initialProductsSelect } from "./products.schema";
-import type { BaseTable, QueryContext } from ">/lib/server/query/types";
+import { initialProductsSelect } from './products.schema';
+import type { BaseTable, QueryContext } from '>/lib/server/query/types';
 import {
   addWhereIn,
   addSelect,
   createQueryContext,
-} from ">/lib/server/query/buildQueryContext";
-import { getConfig } from ">/lib/server/config";
+} from '>/lib/server/query/buildQueryContext';
+import { getConfig } from '>/lib/server/config';
 
-export const createProductQueryContext = (
+export const shouldIgnoreTable = (ctx: QueryContext, table: string) =>
+  ctx.ignoredTables?.includes(table) ?? false;
+
+export const createProductQueryContext = async (
   fromBase: BaseTable,
-): QueryContext => {
+): Promise<QueryContext> => {
+  const useFields = Boolean(await getConfig('products.use_extra_fields'));
   const ctx = createQueryContext(initialProductsSelect, fromBase);
-  ctx.where.push("p.products_display = 1");
+  ctx.ignoredTables = [];
+  if (!useFields) {
+    ctx.ignoredTables.push(
+      ...['products_extra_fields', 'products_to_products_extra_fields'],
+    );
+  }
+  ctx.where.push('p.products_display = 1');
   return ctx;
 };
 
@@ -22,32 +32,32 @@ export const applyProductsToCategories = (
   if (!products.length) return;
 
   ctx.joins.set(
-    "p2c",
+    'p2c',
     `
     JOIN products_to_categories p2c
       ON p.products_id = p2c.products_id
     `,
   );
 
-  addWhereIn(ctx, "p2c.products_id", products);
+  addWhereIn(ctx, 'p2c.products_id', products);
 };
 
 export const applyProductsToBrands = (ctx: QueryContext, brands: number[]) => {
   if (!brands.length) return;
 
   ctx.joins.set(
-    "p2b",
+    'p2b',
     `
     JOIN products_to_brands p2b
       ON p.products_id = p2b.products_id
     `,
   );
 
-  addWhereIn(ctx, "p2b.brands_id", brands);
+  addWhereIn(ctx, 'p2b.brands_id', brands);
 };
 
 export const applyProductsIds = (ctx: QueryContext, ids: number[]) => {
-  addWhereIn(ctx, "p.products_id", ids);
+  addWhereIn(ctx, 'p.products_id', ids);
 };
 
 // export const applySpecialsToProducts = (ctx: QueryContext) => {
@@ -75,7 +85,7 @@ export const applyProductsIds = (ctx: QueryContext, ids: number[]) => {
 export const applyProducts = (
   ctx: QueryContext,
   fromAlias: string,
-  alias = "p",
+  alias = 'p',
 ) => {
   ctx.joins.set(
     alias,
@@ -89,7 +99,7 @@ export const applyProducts = (
 export const applySpecials = (
   ctx: QueryContext,
   fromAlias: string,
-  alias = "sp",
+  alias = 'sp',
 ) => {
   ctx.joins.set(
     alias,
@@ -97,6 +107,35 @@ export const applySpecials = (
     LEFT JOIN products_specials ${alias}
       ON ${alias}.products_id = ${fromAlias}.products_id
       AND NOW() BETWEEN ${alias}.start_date AND ${alias}.end_date
+    `,
+  );
+};
+
+export const applyProductToProductsExtraFields = (
+  ctx: QueryContext,
+  fromAlias: string,
+) => {
+  if (shouldIgnoreTable(ctx, 'products_to_products_extra_fields')) return;
+  const alias = 'p2pef';
+  ctx.joins.set(
+    alias,
+    `
+    LEFT JOIN products_to_products_extra_fields ${alias}
+      ON ${alias}.products_id = ${fromAlias}.products_id
+    `,
+  );
+};
+
+export const applyProductsExtraFields = (ctx: QueryContext) => {
+  if (shouldIgnoreTable(ctx, 'products_extra_fields')) return;
+
+  const alias = 'pef';
+  const fromAlias = 'p2pef';
+  ctx.joins.set(
+    alias,
+    `
+    LEFT JOIN products_extra_fields ${alias}
+      ON ${alias}.products_extra_fields_id = ${fromAlias}.products_extra_fields_id
     `,
   );
 };
@@ -110,7 +149,7 @@ export const applyProductWithSpecials = (
 };
 
 export const applyProductsLanguage = (ctx: QueryContext, languageId = 1) => {
-  const sqlAlias = "pd";
+  const sqlAlias = 'pd';
   ctx.joins.set(
     sqlAlias,
     `
@@ -123,44 +162,45 @@ export const applyProductsLanguage = (ctx: QueryContext, languageId = 1) => {
   addSelect({
     ctx,
     sqlAlias,
-    domainAlias: "productsDescription",
-    columns: ["products_name", "products_description"],
+    domainAlias: 'productsDescription',
+    columns: ['products_name', 'products_description'],
   });
   ctx.params.push(languageId);
 };
 
 export const applyProductsSort = (ctx: QueryContext, sort?: string) => {
   switch (sort) {
-    case "price_asc":
-      ctx.orderBy = "p.products_price ASC";
+    case 'price_asc':
+      ctx.orderBy = 'p.products_price ASC';
       break;
 
-    case "special_price":
-      applySpecials(ctx, "p"); // ensures join exists
-      ctx.orderBy = "sp.special_price ASC";
+    case 'special_price':
+      applySpecials(ctx, 'p'); // ensures join exists
+      ctx.orderBy = 'sp.special_price ASC';
       break;
   }
 };
 
 export const applyFeaturedProductsSort = (ctx: QueryContext, sort?: string) => {
   switch (sort) {
-    case "sort_order":
-      ctx.orderBy = "fp.sort_order ASC";
+    case 'sort_order':
+      ctx.orderBy = 'fp.sort_order ASC';
       break;
   }
 };
 
-export const applyExtraFields = async (
+export const applyHasProductExtraFields = async (
   ctx: QueryContext,
-  alias: string = "p2pef",
+  alias: string = 'p2pef',
 ) => {
-  const useFields = Boolean(await getConfig("products.use_extra_fields"));
-  if (!useFields) return;
+  if (shouldIgnoreTable(ctx, 'products_to_products_extra_fields')) return;
+  // const useFields = Boolean(await getConfig("products.use_extra_fields"));
+  // if (!useFields) return;
 
   addSelect({
     ctx,
-    sqlAlias: "p",
-    domainAlias: "product",
+    sqlAlias: 'p',
+    domainAlias: 'product',
     columns: [
       `EXISTS (
         SELECT 1

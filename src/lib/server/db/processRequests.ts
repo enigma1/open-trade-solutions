@@ -1,7 +1,7 @@
-import { type QueryContext, buildQuery } from ">/lib/server/query";
-import { queryRows } from ">/lib/server/db";
-import { transformData } from ">/lib/server/data/transformers";
-import { PaginatedResult } from ">/lib/server/page-listings/";
+import { type QueryContext, buildQuery } from '>/lib/server/query';
+import { queryRows } from '>/lib/server/db';
+import { transformData } from '>/lib/server/data/transformers';
+import { PaginatedResult } from '>/lib/server/page-listings/';
 
 type ProcessNestedTablesRequestProps = {
   ctx: QueryContext;

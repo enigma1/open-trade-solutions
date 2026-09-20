@@ -1,38 +1,38 @@
-import { buildQueryContext, InitialSelectInput } from ">/lib/server/query";
-import { getPage, getLimitOffset } from ">/lib/server/page-listings";
+import { buildQueryContext, InitialSelectInput } from '>/lib/server/query';
+import { getPage, getLimitOffset } from '>/lib/server/page-listings';
 
 import {
   CategoriesQuerySchema,
   CategoriesQuery,
   initialCategoriesSelect,
-} from "./categories.schema";
+} from './categories.schema';
 import {
   applyCategoriesSort,
   applyCategoriesParents,
   applyCategoriesToProducts,
   applyCategoriesLanguage,
-} from "./categories.query";
+} from './categories.query';
 import {
   processNestedTablesSimpleRequest,
   processNestedTablesRequest,
-} from ">/lib/server/db";
-import { createQueryContext } from ">/lib/server/query";
+} from '>/lib/server/db';
+import { createQueryContext } from '>/lib/server/query';
 import {
   CategoryBreadcrumbType,
   CategoryListBaseType,
-} from ">/lib/shared/types";
-import { initialCategoriesBreadcrumbSelect } from "./categories.schema";
+} from '>/lib/shared/types';
+import { initialCategoriesBreadcrumbSelect } from './categories.schema';
 
 export const getCategoriesOfProduct = async (id: number) => {
   const ctx = createQueryContext(initialCategoriesBreadcrumbSelect, {
-    table: "categories",
-    alias: "c",
+    table: 'categories',
+    alias: 'c',
   });
 
   applyCategoriesToProducts(ctx, [id]);
-  applyCategoriesSort(ctx, "order_asc");
+  applyCategoriesSort(ctx, 'order_asc');
   // ctx.where.push('c.categories_display = 1'); // Add a new column later for this
-  ctx.where.push("p2c.products_id = ?");
+  ctx.where.push('p2c.products_id = ?');
   ctx.params.push(id);
   ctx.nestTables = ctx.joins.size > 0;
 
@@ -64,7 +64,7 @@ export const buildCategoriesQueryContext = async (
 
   // It builds pagination on the return object fix it.
   const { ctx, query } = buildQueryContext<CategoriesQuery>({
-    fromBase: { table: "categories", alias: "c" },
+    fromBase: { table: 'categories', alias: 'c' },
     params,
     schema: CategoriesQuerySchema.pick({
       categories: true,

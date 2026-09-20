@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const literals = <
   const T extends readonly [string | number, ...(string | number)[]],

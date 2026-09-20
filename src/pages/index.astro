@@ -1,10 +1,10 @@
 ---
-import Page from ">/components/Page.astro";
-import ProductGridCard from ">/components/products/ProductGridCard.astro";
-import { getFeaturedProducts } from ">/lib/server/products/product.service";
-import type { ProductListType, ProductListBaseType } from ">/lib/shared/types";
-import { getProductsDescriptions } from ">/lib/server/products/product.repo";
-import { AddToCartButton } from ">/Islands";
+import Page from '>/components/Page.astro';
+import ProductGridCard from '>/components/products/ProductGridCard.astro';
+import { getFeaturedProducts } from '>/lib/server/products/product.service';
+import type { ProductListType, ProductListBaseType } from '>/lib/shared/types';
+import { getProductsDescriptions } from '>/lib/server/products/product.repo';
+import { AddToCartButton } from '>/islands';
 
 const data = await getFeaturedProducts();
 let products: ProductListType[] = [];
@@ -17,9 +17,9 @@ if (!isEmpty) {
   products = data.map((row) => ({
     ...row,
     content: {
-      products_name: map.get(row.product.products_id)?.products_name ?? "",
+      products_name: map.get(row.product.products_id)?.products_name ?? '',
       products_description:
-        map.get(row.product.products_id)?.products_description ?? "",
+        map.get(row.product.products_id)?.products_description ?? '',
     },
   }));
 }

@@ -1,10 +1,10 @@
-import type { SqlTypes, SqlValueMapper } from "./types";
+import type { SqlTypes, SqlValueMapper } from './types';
 
 export const isBinary = (type: string) => {
   return (
-    type.startsWith("binary") ||
-    type.startsWith("varbinary") ||
-    type.endsWith("blob")
+    type.startsWith('binary') ||
+    type.startsWith('varbinary') ||
+    type.endsWith('blob')
   );
 };
 
@@ -14,7 +14,7 @@ const isEmptyObjectValue = (value: unknown) => {
   if (Array.isArray(value) && value.length === 0) return true;
 
   if (
-    typeof value === "object" &&
+    typeof value === 'object' &&
     !Buffer.isBuffer(value) &&
     Object.keys(value as object).length === 0
   ) {
@@ -33,15 +33,15 @@ const bufferTransform = (value: any) => {
 
 const valueRemappers: Record<string, SqlValueMapper> = {
   json: {
-    sql: "CAST(? AS JSON)",
+    sql: 'CAST(? AS JSON)',
     transform: JSON.stringify,
   },
   date: {
-    sql: "?",
+    sql: '?',
     // sql: 'STR_TO_DATE(?)',
   },
   binary: {
-    sql: "?",
+    sql: '?',
     transform: bufferTransform,
   },
 };
@@ -56,7 +56,7 @@ export const getValueMapper = (type: string) => {
   return valueRemappers[lType];
 };
 
-export const remapSqlValue = (type: string) => getValueMapper(type)?.sql ?? "?";
+export const remapSqlValue = (type: string) => getValueMapper(type)?.sql ?? '?';
 
 export const transformSqlValue = (type: string, value: SqlTypes): SqlTypes => {
   if (value === undefined) {

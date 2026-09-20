@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const CartItemSchema = z.object({
   productId: z.number().int().positive(),

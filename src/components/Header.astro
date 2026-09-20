@@ -1,12 +1,13 @@
 ---
-import { CartIcon } from ">/Islands";
+import { CartIcon } from '>/islands';
 const { cookiesDisabled = false } = Astro.props;
 ---
 
 <header class="bg-white shadow-sm border-b">
   {cookiesDisabled && (
     <div class="bg-amber-100 border-b border-amber-300 text-amber-800 text-sm px-4 py-2 text-center">
-      Cookies are disabled in your browser. Some features (cart, preferences) may not work until you enable them.
+      Cookies are disabled in your browser. Some features (cart, preferences)
+      may not work until you enable them.
     </div>
   )}
   <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">

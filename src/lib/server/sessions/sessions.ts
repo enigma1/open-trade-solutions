@@ -1,10 +1,10 @@
-import { insertRows } from ">/lib/server/db";
-import { buildQuery, createQueryContext } from ">/lib/server/query";
-import { queryRows } from ">/lib/server/db";
-import { getSession } from ">/lib/server/request";
-import { getDefaultUserPrefs } from ">/lib/server/config";
-import type { SessionData } from ">/lib/shared/types";
-import type { SessionRow } from "./types";
+import { insertRows } from '>/lib/server/db';
+import { buildQuery, createQueryContext } from '>/lib/server/query';
+import { queryRows } from '>/lib/server/db';
+import { getSession } from '>/lib/server/request';
+import { getDefaultUserPrefs } from '>/lib/server/config';
+import type { SessionData } from '>/lib/shared/types';
+import type { SessionRow } from './types';
 
 export const getSessionId = () => getSession()?.session_id;
 export const getSessionData = () => getSession()?.session_data;
@@ -15,18 +15,18 @@ export const getSessionById = async (
   const ctx = createQueryContext(
     {
       s: {
-        sqlAlias: "s",
-        domainAlias: "session",
-        columns: ["*"],
+        sqlAlias: 's',
+        domainAlias: 'session',
+        columns: ['*'],
       },
     },
     {
-      table: "sessions",
-      alias: "s",
+      table: 'sessions',
+      alias: 's',
     },
   );
 
-  ctx.where.push("s.session_key = ?");
+  ctx.where.push('s.session_key = ?');
   ctx.params.push(sessionKey);
 
   const { query, params } = buildQuery({
@@ -44,16 +44,16 @@ export const getSessionById = async (
 export const createSessionInDatabase = async (
   sessionKey: string,
 ): Promise<SessionRow> => {
-  const table = "sessions";
+  const table = 'sessions';
   const initialPrefs = await getDefaultUserPrefs();
   const sessionData: SessionData = {
     prefs: initialPrefs,
     cart: [],
-    checkout: "cart",
+    checkout: 'cart',
   };
   const data = {
     table,
-    columnsOrder: ["session_key", "session_data"],
+    columnsOrder: ['session_key', 'session_data'],
     rows: [[sessionKey, sessionData]],
   };
   await insertRows(data);

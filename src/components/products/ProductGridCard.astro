@@ -1,13 +1,13 @@
 ---
-import type { ProductListType } from ">/lib/shared/types";
-import Button from ">/components/ui/Button.astro";
-import { AddToCartButton } from ">/Islands";
+import type { ProductListType } from '>/lib/shared/types';
+import Button from '>/components/ui/Button.astro';
+import { AddToCartButton } from '>/islands';
 const { product: item } = Astro.props;
 
 const { product, special, content } = item;
 
 const img = product.products_image;
-const hasImage = img && img !== "";
+const hasImage = img && img !== '';
 const base = `/api/image?src=images/${img}`;
 interface Props {
   product: ProductListType;

@@ -2,24 +2,24 @@ import {
   PROBE_COOKIE_ID,
   SHOP_COOKIE_ID,
   REDIRECT_MARKER,
-} from ">/lib/server/config";
-import { defineMiddleware } from "astro:middleware";
-import { randomUUID } from "node:crypto";
+} from '>/lib/server/config';
+import { defineMiddleware } from 'astro:middleware';
+import { randomUUID } from 'node:crypto';
 import {
   createRedirection,
   verifyProbeCookieSignature,
   deleteCookie,
   setProbeCookie,
   setShopCookie,
-} from ">/lib/server/request/cookies";
+} from '>/lib/server/request/cookies';
 
-import { getSessionById, createSessionInDatabase } from ">/lib/server/sessions";
-import { als } from ">/lib/server/request";
+import { getSessionById, createSessionInDatabase } from '>/lib/server/sessions';
+import { als } from '>/lib/server/request';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { cookies, url } = context;
 
-  const userAgent = context.request.headers.get("user-agent") ?? "";
+  const userAgent = context.request.headers.get('user-agent') ?? '';
   const isCrawler =
     !userAgent ||
     /bot|crawler|spider|slurp|archiver|fetcher|preview/i.test(userAgent);
@@ -29,7 +29,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const redirected = url.searchParams.get(REDIRECT_MARKER);
 
   // Set the local redirection flag if already being redirected
-  context.locals.redirected = redirected === "1";
+  context.locals.redirected = redirected === '1';
 
   // If a session cookie received validate it against the database.
   if (otsId) {
@@ -46,7 +46,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   // Avoid infinite redirects if already redirected previously just set the probe cookies and leave.
-  if (redirected === "1" && !probe) {
+  if (redirected === '1' && !probe) {
     context.locals.cookiesDisabled = true;
     setProbeCookie(cookies);
     return als.run({}, () => next());

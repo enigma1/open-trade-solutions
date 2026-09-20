@@ -1,5 +1,5 @@
-import { ShoppingCartIcon } from "lucide-react";
-import { cartStore } from ">/client/app";
+import { ShoppingCartIcon } from 'lucide-react';
+import { cartStore } from '>/client/app';
 
 const { useCartStore } = cartStore;
 

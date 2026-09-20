@@ -11,13 +11,11 @@ const searchResults = await getProductsFromRequest(url.searchParams);
 // const results = await fetch(`https://api/search?q=${q}`).then((r) => r.json());
 ---
 
-<Page title='Search Results'>
+<Page title="Search Results">
   <h1>Results for {q}</h1>
-  <div class='grid'>
-    {
-      (searchResults as any).map((product: any) => (
-        <ProductGridCard product={product} />
-      ))
-    }
+  <div class="grid">
+    {(searchResults as any).map((product: any) => (
+      <ProductGridCard product={product} />
+    ))}
   </div>
 </Page>

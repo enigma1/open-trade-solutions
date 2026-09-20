@@ -1,7 +1,7 @@
-import { type ResultSetHeader, escapeId } from "mysql2";
-import type { SqlTypes, SqlRow, WhereCondition } from "./types";
-import { db } from "./config";
-import { getRealColumns } from "./utils";
+import { type ResultSetHeader, escapeId } from 'mysql2';
+import type { SqlTypes, SqlRow, WhereCondition } from './types';
+import { db } from './config';
+import { getRealColumns } from './utils';
 
 type UpdateRowsProps = {
   table: string;
@@ -42,7 +42,7 @@ export const updateRows = async ({
     const val = row[index];
     const type = columnTypes[col];
 
-    if (type.startsWith("json")) {
+    if (type.startsWith('json')) {
       values.push(JSON.stringify(val));
       return `${escapeId(col)} = CAST(? AS JSON)`;
     }
@@ -60,8 +60,8 @@ export const updateRows = async ({
 
   const sql = `
     UPDATE ${escapedTable}
-    SET ${setClauses.join(", ")}
-    WHERE ${whereClauses.join(" AND ")}
+    SET ${setClauses.join(', ')}
+    WHERE ${whereClauses.join(' AND ')}
   `;
 
   await db.query<ResultSetHeader>({
