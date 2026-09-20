@@ -17,12 +17,12 @@ const { lang, t, url } = ctx;
 const context = await buildCategoriesListingContext(url.searchParams, t);
 const categoriesData = await getCategoriesFromRequest(url.searchParams);
 
-const { data, pagination } = categoriesData;
+const { items, pagination } = categoriesData;
 let categories: CategoryListType[] = [];
-const isEmpty = data.length === 0;
+const isEmpty = items.length === 0;
 
 if (!isEmpty) {
-  categories = data.map((row) => ({
+  categories = items.map((row) => ({
     id: row.category.categories_id,
     image: row.category.categories_image,
     name: row.content.categories_name,
@@ -62,10 +62,11 @@ if (!isEmpty) {
       </div>
       <CategoriesGrid categories={categories} />
       <Pagination
-        itemsShown={data.length}
-        page={pagination.page}
-        perPage={pagination.perPage}
-        hasMore={pagination.hasMore}
+        itemsShown={items.length}
+        offset={pagination.offset}
+        limit={pagination.limit}
+        hasNext={pagination.hasNext}
+        hasPrevious={pagination.hasPrevious}
       />
     </>
   )}

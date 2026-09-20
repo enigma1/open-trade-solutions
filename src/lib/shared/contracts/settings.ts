@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PageSizeSchema } from ">/lib/server/contracts";
 
 const noTrim = (name: string) =>
   z
@@ -8,19 +9,9 @@ const noTrim = (name: string) =>
       `${name} must not contain leading or trailing whitespace`,
     );
 
-export const literals = <
-  const T extends readonly [string | number, ...(string | number)[]],
->(
-  values: T,
-) => z.union(values.map((value) => z.literal(value)) as any);
-
-export const pageSizeValues = [25, 50, 100] as const;
-export const PageSizeSchema = literals(pageSizeValues);
-export type PageSize = z.infer<typeof PageSizeSchema>;
-
 export const UserPrefsSchema = z.object({
   theme: noTrim("theme").min(1).max(256),
-  productsPerPage: PageSizeSchema,
+  itemsPerPage: PageSizeSchema,
   sort: z.enum(["asc", "desc"]).optional(),
   cu: z.number().int().positive(),
   lang: z.number().int().positive(),

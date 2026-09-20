@@ -1,18 +1,18 @@
 ---
-import Page from '>/components/Page.astro';
-import Pagination from '>/components/Pagination.astro';
-import Breadcrumb from '>/components/Breadcrumb.astro';
-import ProductGridCard from '>/components/products/ProductGridCard.astro';
-import ProductGridEmpty from '>/components/products/ProductGridEmpty.astro';
-import { getProductsFromRequest } from '>/lib/server/products/product.service';
-import { indexBy } from '>/lib/shared/utils';
-import type { ProductListType } from '>/lib/shared/types';
-import { getProductsDescriptions } from '>/lib/server/products/product.repo';
+import Page from ">/components/Page.astro";
+import Pagination from ">/components/Pagination.astro";
+import Breadcrumb from ">/components/Breadcrumb.astro";
+import ProductGridCard from ">/components/products/ProductGridCard.astro";
+import ProductGridEmpty from ">/components/products/ProductGridEmpty.astro";
+import { getProductsFromRequest } from ">/lib/server/products/product.service";
+import { indexBy } from ">/lib/shared/utils";
+import type { ProductListType } from ">/lib/shared/types";
+import { getProductsDescriptions } from ">/lib/server/products/product.repo";
 import {
   createRequestContext,
   buildProductListingContext,
-} from '>/lib/server/page-context';
-import ListingIntro from '>/components/ListingIntro.astro';
+} from ">/lib/server/page-context";
+import ListingIntro from ">/components/ListingIntro.astro";
 
 // Mocked data
 // import { productsGrid } from '@/data/';
@@ -20,69 +20,68 @@ import ListingIntro from '>/components/ListingIntro.astro';
 const { t, url } = await createRequestContext(Astro);
 const context = await buildProductListingContext(url.searchParams, t);
 const productsData = await getProductsFromRequest(url.searchParams);
-const { data, pagination } = productsData;
+const { items, pagination } = productsData;
 // console.log('Products Data:', data);
 let products: ProductListType[] = [];
-const isEmpty = data.length === 0;
+const isEmpty = items.length === 0;
 if (!isEmpty) {
-  const ids = data.map((row) => row.product.products_id);
+  const ids = items.map((row) => row.product.products_id);
   const descriptions = await getProductsDescriptions(ids);
   const map = new Map(descriptions.map((d) => [d.products_id, d]));
-  products = data.map((row) => ({
+  products = items.map((row) => ({
     ...row,
     content: {
-      products_name: map.get(row.product.products_id)?.products_name ?? '',
+      products_name: map.get(row.product.products_id)?.products_name ?? "",
       products_description:
-        map.get(row.product.products_id)?.products_description ?? '',
+        map.get(row.product.products_id)?.products_description ?? "",
     },
   }));
 }
 ---
 
 <Page title={context.title}>
-  {
-    isEmpty ? (
-      <ProductGridEmpty />
-    ) : (
-      <>
-        <div class='mb-3'>
-          {context.breadcrumb.length > 0 && (
-            <div class='bg-surface-muted px-4 py-2 rounded-md'>
-              <Breadcrumb segments={context.breadcrumb} />
-            </div>
-          )}
-        </div>
-        <div class='mb-3'>
-          {context.type === 'category' && (
-            <ListingIntro
-              title={`Products in ${context?.entity?.name}`}
-              description={context?.entity?.description}
-              image={context?.entity?.image}
-            />
-          )}
+  {isEmpty ? (
+    <ProductGridEmpty />
+  ) : (
+    <>
+      <div class="mb-3">
+        {context.breadcrumb.length > 0 && (
+          <div class="bg-surface-muted px-4 py-2 rounded-md">
+            <Breadcrumb segments={context.breadcrumb} />
+          </div>
+        )}
+      </div>
+      <div class="mb-3">
+        {context.type === "category" && (
+          <ListingIntro
+            title={`Products in ${context?.entity?.name}`}
+            description={context?.entity?.description}
+            image={context?.entity?.image}
+          />
+        )}
 
-          {context.type === 'brand' && (
-            <ListingIntro
-              title={`Products from ${context?.entity?.name}`}
-              description={context?.entity?.description}
-              image={context?.entity?.image}
-              align='right'
-            />
-          )}
-        </div>
-        <div class='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3'>
-          {products.map((item) => (
-            <ProductGridCard product={item} />
-          ))}
-        </div>
+        {context.type === "brand" && (
+          <ListingIntro
+            title={`Products from ${context?.entity?.name}`}
+            description={context?.entity?.description}
+            image={context?.entity?.image}
+            align="right"
+          />
+        )}
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {products.map((item) => (
+          <ProductGridCard product={item} />
+        ))}
+      </div>
 
-        <Pagination
-          itemsShown={data.length}
-          page={pagination.page}
-          perPage={pagination.perPage}
-          hasMore={pagination.hasMore}
-        />
-      </>
-    )
-  }
+      <Pagination
+        itemsShown={items.length}
+        offset={pagination.offset}
+        limit={pagination.limit}
+        hasNext={pagination.hasNext}
+        hasPrevious={pagination.hasPrevious}
+      />
+    </>
+  )}
 </Page>

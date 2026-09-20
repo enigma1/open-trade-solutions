@@ -1,13 +1,11 @@
 import { type QueryContext, buildQuery } from ">/lib/server/query";
 import { queryRows } from ">/lib/server/db";
-import { transformData } from ">/lib/server/shared/transformers";
-import { type GetResultsFromRequest } from "./types";
+import { transformData } from ">/lib/server/data/transformers";
+import { PaginatedResult } from ">/lib/server/page-listings/";
 
 type ProcessNestedTablesRequestProps = {
   ctx: QueryContext;
   pagination: {
-    page: number;
-    perPage: number;
     limit: number;
     offset: number;
   };
@@ -16,7 +14,7 @@ export const processNestedTablesRequest = async <
   T extends Record<string, any> = Record<string, any>,
 >(
   props: ProcessNestedTablesRequestProps,
-): Promise<GetResultsFromRequest<T>> => {
+): Promise<PaginatedResult<T>> => {
   const { ctx, pagination } = props;
   const { query, params: queryParams } = buildQuery({
     ctx,
@@ -27,15 +25,16 @@ export const processNestedTablesRequest = async <
     params: queryParams,
     options: { nestTables: ctx.nestTables },
   });
-  const hasMore = rows.length > pagination.perPage;
-  const data = hasMore ? rows.slice(0, pagination.perPage) : rows;
+  const hasNext = rows.length > pagination.limit;
+  const data = hasNext ? rows.slice(0, pagination.limit) : rows;
   const transformedData = transformData<T>(data, ctx.select);
   return {
-    data: transformedData,
+    items: transformedData,
     pagination: {
-      page: pagination.page,
-      perPage: pagination.perPage,
-      hasMore,
+      offset: pagination.offset,
+      limit: pagination.limit,
+      hasNext: hasNext,
+      hasPrevious: pagination.offset > 0,
     },
   };
 };

@@ -1,5 +1,6 @@
 import { buildQueryContext, InitialSelectInput } from ">/lib/server/query";
-import { PaginationSchema, transformToLimitOffset } from ">/lib/server/shared";
+import { getPage, getLimitOffset } from ">/lib/server/page-listings";
+
 import {
   CategoriesQuerySchema,
   CategoriesQuery,
@@ -43,7 +44,7 @@ export const getCategoriesOfProduct = async (id: number) => {
 
 export const getCategoriesFromRequest = async (params: URLSearchParams) => {
   const initialSelect = initialCategoriesSelect;
-  const { ctx, pagination } = buildCategoriesQueryContext(
+  const { ctx, pagination } = await buildCategoriesQueryContext(
     params,
     initialSelect,
   );
@@ -53,15 +54,14 @@ export const getCategoriesFromRequest = async (params: URLSearchParams) => {
   });
 };
 
-export const buildCategoriesQueryContext = (
+export const buildCategoriesQueryContext = async (
   params: URLSearchParams,
   initialSelect: InitialSelectInput,
 ) => {
   const raw = Object.fromEntries(params.entries());
-  const { page, perPage } = PaginationSchema.parse(
-    Object.fromEntries(params.entries()),
-  );
-  const pagination = transformToLimitOffset(page, perPage);
+  const page = getPage(raw.page);
+  const pagination = await getLimitOffset(page);
+
   // It builds pagination on the return object fix it.
   const { ctx, query } = buildQueryContext<CategoriesQuery>({
     fromBase: { table: "categories", alias: "c" },

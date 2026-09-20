@@ -1,13 +1,12 @@
-import type { InitialSelectInput } from '>/lib/server/query/types';
-import { type SelectGroup } from '>/lib/server/query';
+import { type SelectGroup } from ">/lib/server/query";
 
 export const transformData = <
   T extends Record<string, any> = Record<string, any>,
 >(
-  data: Record<string, any>[],
+  items: Record<string, any>[],
   select: Map<string, SelectGroup>,
 ): T[] => {
-  return data.map((row) => {
+  return items.map((row) => {
     const output: T = {} as T;
 
     for (const group of select.values()) {
@@ -17,7 +16,7 @@ export const transformData = <
       const domainAlias = group.domainAlias as keyof T;
       const columns = group.columns;
 
-      if (columns.has('*')) {
+      if (columns.has("*")) {
         output[domainAlias] = source;
         continue;
       }
@@ -28,7 +27,6 @@ export const transformData = <
       }
       output[domainAlias] = partial as T[keyof T];
     }
-
     return output;
   });
 };

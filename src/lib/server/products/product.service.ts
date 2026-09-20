@@ -21,7 +21,7 @@ import {
   buildQueryContext,
   createQueryContext,
 } from ">/lib/server/query/buildQueryContext";
-import { transformToLimitOffset } from ">/lib/server/shared";
+import { transformToLimitOffset } from ">/lib/server/data";
 import {
   initialProductBreadcrumbSelect,
   initialProductInfoSelect,
@@ -30,7 +30,7 @@ import {
   ProductsQuerySchema,
   type ProductsQuery,
 } from "./products.schema";
-import { PaginationSchema } from ">/lib/server/shared/pagination";
+import { PaginationSchema } from ">/lib/server/page-listings/pagination";
 import { getConfig } from ">/lib/server/config";
 import type {
   ProductFullType,

@@ -1,67 +1,66 @@
 ---
-import Page from '>/components/Page.astro';
-import Pagination from '>/components/Pagination.astro';
-import ProductGridCard from '>/components/products/ProductGridCard.astro';
+import Page from ">/components/Page.astro";
+import Pagination from ">/components/Pagination.astro";
+import ProductGridCard from ">/components/products/ProductGridCard.astro";
 import {
   getProductsDescriptions,
   getSpecialProductsFromRequest,
-} from '>/lib/server/products';
-import type { ProductListType } from '>/lib/shared/types';
+} from ">/lib/server/products";
+import type { ProductListType } from ">/lib/shared/types";
 
 // Mocked data
 // import { productsGrid } from '@/data/';
 const url = new URL(Astro.request.url);
-const q = url.searchParams.get('q');
+const q = url.searchParams.get("q");
 const productsData = await getSpecialProductsFromRequest(
   new URL(Astro.request.url).searchParams,
 );
-const { data, pagination } = productsData;
+const { items, pagination } = productsData;
 
 let products: ProductListType[] = [];
-const isEmpty = data.length === 0;
+const isEmpty = items.length === 0;
 if (!isEmpty) {
-  const ids = data.map((row) => row.product.products_id);
+  const ids = items.map((row) => row.product.products_id);
   const descriptions = await getProductsDescriptions(ids);
   const map = new Map(descriptions.map((d) => [d.products_id, d]));
-  products = data.map((row) => ({
+  products = items.map((row) => ({
     ...row,
     content: {
       ...row.product,
-      products_name: map.get(row.product.products_id)?.products_name ?? '',
+      products_name: map.get(row.product.products_id)?.products_name ?? "",
       products_description:
-        map.get(row.product.products_id)?.products_description ?? '',
+        map.get(row.product.products_id)?.products_description ?? "",
     },
   }));
 }
 
 const title = isEmpty
-  ? 'No Deals Found'
-  : `Specials Dealsin ${q ?? 'All Deals'}`;
+  ? "No Deals Found"
+  : `Specials Dealsin ${q ?? "All Deals"}`;
 ---
 
 <Page title={title}>
-  {
-    isEmpty ? (
-      <>
-        <h1 class='text-2xl font-bold pb-3'>No specials found</h1>
-        <p>Try adjusting your filters or browse all products.</p>
-      </>
-    ) : (
-      <>
-        <h1>List of Best Deals in {q}</h1>
-        <div class='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-          {products.map((item) => (
-            <ProductGridCard product={item} />
-          ))}
-        </div>
+  {isEmpty ? (
+    <>
+      <h1 class="text-2xl font-bold pb-3">No specials found</h1>
+      <p>Try adjusting your filters or browse all products.</p>
+    </>
+  ) : (
+    <>
+      <h1>List of Best Deals in {q}</h1>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {products.map((item) => (
+          <ProductGridCard product={item} />
+        ))}
+      </div>
 
-        <Pagination
-          itemsShown={data.length}
-          page={pagination.page}
-          perPage={pagination.perPage}
-          hasMore={pagination.hasMore}
-        />
-      </>
-    )
-  }
+      <Pagination
+        itemsShown={items.length}
+        offset={pagination.offset}
+        limit={pagination.limit}
+        hasNext={pagination.hasNext}
+        hasPrevious={pagination.hasPrevious}
+      />
+    </>
+  )}
 </Page>
