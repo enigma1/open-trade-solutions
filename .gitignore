@@ -27,6 +27,7 @@ pnpm-debug.log*
 .bash_history
 .k*/
 /tmp
+/guides
 *.log
 .sh
 .bash_history

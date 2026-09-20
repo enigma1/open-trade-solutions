@@ -1,0 +1,73 @@
+@layer components {
+  .product-title {
+    @apply text-2xl font-bold pb-3;
+    background-color: var(--color-srf-peak);
+    color: var(--color-text);
+  }
+
+  .product-grid {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-6;
+  }
+
+  .product-main-content {
+    @apply lg:col-span-2 flex flex-col gap-4;
+  }
+
+  .product-image {
+    @apply w-full max-h-400 object-contain rounded border;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .product-description {
+    @apply prose max-w-none;
+  }
+
+  .product-purchase-panel {
+    @apply flex flex-col gap-3 h-fit;
+    background-color: var(--color-srf-peak);
+    border-color: var(--color-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .product-price {
+    @apply text-xl font-semibold;
+    color: var(--color-text);
+  }
+
+  .product-meta {
+    @apply text-sm;
+    color: var(--color-text-dim);
+  }
+
+  .product-stock-status {
+    @apply text-sm font-medium;
+  }
+
+  .product-stock-in {
+    color: var(--color-success);
+  }
+
+  .product-stock-out {
+    color: var(--color-error);
+  }
+
+  .product-buy-button {
+    @apply px-4 py-2 rounded transition;
+    background-color: var(--color-action);
+    color: var(--color-text-peak);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .product-buy-button:hover:not(:disabled) {
+    background-color: var(--color-srf-high);
+    color: var(--color-action);
+  }
+
+  .product-buy-button:disabled {
+    background-color: var(--color-srf-dim);
+    color: var(--color-text-light);
+    cursor: not-allowed;
+  }
+}

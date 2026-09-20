@@ -21,7 +21,7 @@ import {
   buildQueryContext,
   createQueryContext,
 } from ">/lib/server/query/buildQueryContext";
-import { transformToLimitOffset } from ">/lib/server/data";
+import { getPage, getLimitOffset } from ">/lib/server/page-listings";
 import {
   initialProductBreadcrumbSelect,
   initialProductInfoSelect,
@@ -30,7 +30,6 @@ import {
   ProductsQuerySchema,
   type ProductsQuery,
 } from "./products.schema";
-import { PaginationSchema } from ">/lib/server/page-listings/pagination";
 import { getConfig } from ">/lib/server/config";
 import type {
   ProductFullType,
@@ -63,24 +62,24 @@ export const getProductsFromRequest = async (params: URLSearchParams) => {
   const initialSelect = isEmptyObject(params)
     ? initialProductsOnlySelect
     : initialProductsSelect;
-  const { ctx, pagination } = buildProductQueryContext(params, initialSelect);
+  const { ctx, pagination } = await buildProductQueryContext(
+    params,
+    initialSelect,
+  );
   return processNestedTablesRequest<ProductListBaseType>({
     ctx,
     pagination,
   });
 };
 
-export const buildProductQueryContext = (
+export const buildProductQueryContext = async (
   params: URLSearchParams,
   initialSelect: InitialSelectInput,
 ) => {
   const raw = Object.fromEntries(params.entries());
   const isMixed = "categories" in raw && "brands" in raw;
-
-  const { page, perPage } = PaginationSchema.parse(
-    Object.fromEntries(params.entries()),
-  );
-  const pagination = transformToLimitOffset(page, perPage);
+  const page = getPage(raw.page);
+  const pagination = await getLimitOffset(page);
   // It builds pagination on the return object fix it.
   const { ctx, query } = buildQueryContext<ProductsQuery>({
     fromBase: { table: "products", alias: "p" },
@@ -112,7 +111,7 @@ export const buildProductQueryContext = (
 export const getSpecialProductsFromRequest = async (
   params: URLSearchParams,
 ) => {
-  const { ctx, pagination } = buildSpecialProductsQueryContext(
+  const { ctx, pagination } = await buildSpecialProductsQueryContext(
     params,
     initialProductsSelect,
   );
@@ -122,14 +121,13 @@ export const getSpecialProductsFromRequest = async (
   });
 };
 
-export const buildSpecialProductsQueryContext = (
+export const buildSpecialProductsQueryContext = async (
   params: URLSearchParams,
   initialSelect: InitialSelectInput,
 ) => {
-  const { page, perPage } = PaginationSchema.parse(
-    Object.fromEntries(params.entries()),
-  );
-  const pagination = transformToLimitOffset(page, perPage);
+  const raw = Object.fromEntries(params.entries());
+  const page = getPage(raw.page);
+  const pagination = await getLimitOffset(page);
   const { ctx, query } = buildQueryContext<ProductsQuery>({
     fromBase: { table: "products_specials", alias: "sp" },
     params,

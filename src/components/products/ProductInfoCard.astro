@@ -2,53 +2,54 @@
 import type { ProductFullType } from '>/lib/shared/types';
 
 const { productInfo } = Astro.props;
-const { product, special, content } = productInfo;
+const { product, content } = productInfo;
+
 interface Props {
   productInfo: ProductFullType;
 }
 const inStock = product.products_status === 1;
 ---
 
-<h1 class='text-2xl font-bold pb-3 bg-white'>
+<h1 class='product-title'>
   {content.products_name}
 </h1>
 
-<div class='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+<div class='product-grid'>
   <!-- LEFT: Main content -->
-  <div class='lg:col-span-2 flex flex-col gap-4'>
+  <div class='product-main-content'>
     <img
       src={`/images/${product.products_image}`}
       alt={content.products_name}
-      class='w-full max-h-400 object-contain rounded border shadow-sm'
+      class='product-image'
     />
 
-    <div class='prose max-w-none'>
+    <div class='product-description'>
       <p>{content.products_description}</p>
     </div>
   </div>
 
   <!-- RIGHT: Purchase panel -->
-  <div class='border rounded-lg p-4 shadow-sm flex flex-col gap-3 h-fit'>
-    <p class='text-xl font-semibold'>
+  <div class='product-purchase-panel'>
+    <p class='product-price'>
       £{Number(product.products_price).toFixed(2)}
     </p>
 
-    <p class='text-sm text-gray-600'>
+    <p class='product-meta'>
       Model: {product.products_model}
     </p>
 
-    <p class='text-sm text-gray-600'>
+    <p class='product-meta'>
       Added: {product.products_date_added.toLocaleDateString()}
     </p>
 
     <p
-      class={`text-sm font-medium ${inStock ? 'text-green-600' : 'text-red-600'}`}
+      class={`product-stock-status ${inStock ? 'product-stock-in' : 'product-stock-out'}`}
     >
       {inStock ? 'In Stock' : 'Out of Stock'}
     </p>
 
     <button
-      class='mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition disabled:bg-gray-400'
+      class='product-buy-button'
       disabled={!inStock}
     >
       Buy Now

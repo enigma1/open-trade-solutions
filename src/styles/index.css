@@ -1,5 +1,7 @@
+@plugin "@tailwindcss/typography";
 @import "./palettes/index.css";
 @import "./page.css";
 @import "./buttons.css";
 @import "./menus.css";
 @import "./cart.css";
+@import "./products.css";
