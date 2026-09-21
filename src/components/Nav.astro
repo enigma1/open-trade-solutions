@@ -1,0 +1,18 @@
+---
+const menuItems = [
+  { id: 'categories', label: 'Categories', title: 'Store Categories' },
+  { id: 'brands', label: 'Brands', title: 'Store Brands and Manufacturers' },
+  { id: 'customers', label: 'Customer', title: 'Customer Options' },
+  { id: 'store', label: 'Store', title: 'Store Options' },
+];
+---
+
+<div class="menu">
+  {menuItems.map((item) => (
+    <div class="menu-dropdown" title={item.title}>
+      <button type="button" class="menu-trigger" data-menu-id={item.id}>
+        {item.label}
+      </button>
+    </div>
+  ))}
+</div>

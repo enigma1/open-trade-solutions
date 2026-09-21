@@ -18,6 +18,13 @@
       background-color: var(--color-srf-muted);
       color: var(--color-text);
     }
+
+    &+.menu-dropdown::before {
+      content: '|';
+      @apply mx-2;
+      color: var(--color-text-muted);
+
+    }
   }
 
   .menu-trigger {
