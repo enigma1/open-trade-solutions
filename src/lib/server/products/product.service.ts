@@ -40,10 +40,7 @@ import type {
   ProductBreadcrumbType,
 } from '>/lib/shared/types';
 import { isEmptyObject } from '>/lib/shared/utils';
-import { languageApi } from '>/lib/server/request/language';
-
 import type { ProductInfoRow } from './types';
-import { initialCategoriesBreadcrumbSelect } from '>/lib/server/categories/categories.schema';
 
 export const getProductById = async (
   id: number,
@@ -101,7 +98,7 @@ export const buildProductQueryContext = async (
     features: [
       (ctx, q) => applyCategoriesToProducts(ctx, q.categories),
       (ctx, q) => applyProductsToBrands(ctx, q.brands),
-      (ctx) => applyWithSpecialsDated(ctx, 'p'),
+      (ctx) => applyWithSpecialsDated(ctx, pAlias),
       (ctx, q) => applyProductsSort(ctx, q.sort),
     ],
     initialSelect,
@@ -130,6 +127,37 @@ export const getSpecialProductsFromRequest = async (
   });
 };
 
+export const buildSpecialProductsModuleContext = async (count: number) => {
+  const spTable = dbTables.products_specials;
+  const spAlias = dbAliases.products_specials;
+  const pAlias = dbAliases.products;
+
+  const ctx = await createQueryContext(initialProductsOnlySelect, {
+    table: spTable,
+    alias: spAlias,
+  });
+
+  applyWithProducts(ctx, spAlias);
+  applyHasProductExtraFields(ctx);
+  ctx.where.push(`${pAlias}.products_display = 1`);
+  ctx.orderBy = `${spAlias}.start_date DESC`;
+  ctx.limit = count;
+  ctx.nestTables = ctx.joins.size > 0;
+
+  return { ctx };
+};
+
+export const getSpecialProducts = async () => {
+  const count = Number(await getConfig('products.specials_listing_size'));
+  if (!count) return [];
+
+  const { ctx } = await buildSpecialProductsModuleContext(count);
+
+  return processNestedTablesSimpleRequest<ProductListBaseType>({
+    ctx,
+  });
+};
+
 export const buildSpecialProductsQueryContext = async (
   params: URLSearchParams,
   initialSelect: InitialSelectInput,
@@ -140,7 +168,7 @@ export const buildSpecialProductsQueryContext = async (
   const raw = Object.fromEntries(params.entries());
   const page = getPage(raw.page);
   const pagination = await getLimitOffset(page);
-  const { ctx, query } = await buildQueryContext<ProductsQuery>({
+  const { ctx } = await buildQueryContext<ProductsQuery>({
     fromBase: { table: spTable, alias: spAlias },
     params,
     schema: ProductsQuerySchema.pick({
@@ -156,12 +184,12 @@ export const buildSpecialProductsQueryContext = async (
     ],
     initialSelect,
   });
+
   ctx.where.push(`${pAlias}.products_display = 1`);
   // after features applied
   ctx.nestTables = ctx.joins.size > 0;
   return {
     ctx,
-    query,
     pagination,
   };
 };
@@ -170,13 +198,13 @@ export const getFeaturedProducts = async () => {
   const count = Number(await getConfig('products.featured_listing_size'));
   if (!count) return [];
 
-  const { ctx } = await buildFeaturedProductsQueryContext(count);
+  const { ctx } = await buildFeaturedProductsModuleContext(count);
   return await processNestedTablesSimpleRequest<ProductListBaseType>({
     ctx,
   });
 };
 
-export const buildFeaturedProductsQueryContext = async (count: number) => {
+export const buildFeaturedProductsModuleContext = async (count: number) => {
   const fpTable = dbTables.products_featured;
   const fpAlias = dbAliases.products_featured;
   const pAlias = dbAliases.products;
@@ -184,9 +212,9 @@ export const buildFeaturedProductsQueryContext = async (count: number) => {
     table: fpTable,
     alias: fpAlias,
   });
-  applyProductWithSpecials(ctx, 'fp');
+  applyProductWithSpecials(ctx, fpAlias);
   applyHasProductExtraFields(ctx);
-  applyFeaturedProductsSort(ctx, 'fp');
+  applyFeaturedProductsSort(ctx, fpAlias);
   ctx.where.push(`${fpAlias}.status = 1`);
   ctx.where.push(`${pAlias}.products_display = 1`);
   ctx.orderBy = `${fpAlias}.sort_order ASC`;

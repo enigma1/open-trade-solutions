@@ -29,7 +29,7 @@ export const getSessionById = async (
     },
   );
 
-  ctx.where.push('s.session_key = ?');
+  ctx.where.push(`${sAlias}.session_key = ?`);
   ctx.params.push(sessionKey);
 
   const { query, params } = buildQuery({
@@ -47,7 +47,7 @@ export const getSessionById = async (
 export const createSessionInDatabase = async (
   sessionKey: string,
 ): Promise<SessionRow> => {
-  const table = dbTables.sessions;
+  const sTable = dbTables.sessions;
   const initialPrefs = await getDefaultUserPrefs();
   const sessionData: SessionData = {
     prefs: initialPrefs,
@@ -55,7 +55,7 @@ export const createSessionInDatabase = async (
     checkout: 'cart',
   };
   const data = {
-    table,
+    table: sTable,
     columnsOrder: ['session_key', 'session_data'],
     rows: [[sessionKey, sessionData]],
   };
@@ -70,8 +70,9 @@ export const updateSessionInDatabase = async (
   sessionKey: string,
   sessionData: SessionData,
 ): Promise<void> => {
+  const sTable = dbTables.sessions;
   await updateRows({
-    table: 'sessions',
+    table: sTable,
     columnsOrder: ['session_data'],
     row: [sessionData],
     where: [
