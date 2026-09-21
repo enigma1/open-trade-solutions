@@ -1,40 +1,45 @@
-import { db, queryRows } from '>/lib/server/db';
+import { db, dbTables, dbAliases, queryRows } from '>/lib/server/db';
 import { CategoryBreadcrumbType } from '>/lib/shared/types';
 import type { CategoryPathItem, CategoryDescriptionRow } from './types';
 import { routes } from '>/lib/shared/routes';
 
-export const getCategories = async () => {
-  const [rows] = await db.query(
-    'SELECT c.categories_id, cd.categories_name FROM categories c left join categories_description cd on (c.categories_id = cd.categories_id) AND cd.language_id = ?',
-    [1], // Replace 1 with the actual language ID as needed
-  );
-
-  return rows;
+type GetCategoryPathProps = {
+  cId: number;
+  rId?: number;
+  cLimit?: number;
 };
 
-export const getCategoryPath = async (id: number) => {
+export const getCategoryPath = async ({
+  cId,
+  rId,
+  cLimit = 20,
+}: GetCategoryPathProps) => {
+  const limit = Math.max(1, cLimit);
+
+  const cAlias = dbAliases.categories;
+  const cTable = dbTables.categories;
+
   const query = `
     WITH RECURSIVE cat_path AS (
-      SELECT categories_id, parent_id, 0 AS depth
-      FROM categories
-      WHERE categories_id = ?
-
+      SELECT ${cAlias}.*, 0 AS depth
+      FROM ${cTable} ${cAlias}
+      WHERE ${cAlias}.categories_id = ?
       UNION ALL
-
-      SELECT c.categories_id, c.parent_id, cp.depth + 1
-      FROM categories c
-      JOIN cat_path cp ON cp.parent_id = c.categories_id
+      SELECT ${cAlias}.*, cp.depth + 1
+      FROM ${cTable} ${cAlias}
+      JOIN cat_path cp
+        ON ${cAlias}.categories_id = cp.parent_id
+      WHERE cp.depth < ? AND (? = 0 OR cp.categories_id != ?)
     )
-    SELECT categories_id, parent_id
+    SELECT *
     FROM cat_path
-    ORDER BY depth DESC;
+    ORDER BY depth ASC
   `;
 
-  const rows = await queryRows<CategoryPathItem>({
+  return queryRows<CategoryPathItem>({
     query,
-    params: [id],
+    params: [cId, limit - 1, rId ?? 0, rId ?? 0],
   });
-  return rows;
 };
 
 export const getCategoriesDescriptions = async (
@@ -42,9 +47,9 @@ export const getCategoriesDescriptions = async (
   languageId = 1,
 ): Promise<CategoryDescriptionRow[]> => {
   if (!cIds.length) return [];
-
+  const cdTable = dbTables.categories_description;
   const placeholders = cIds.map(() => '?').join(',');
-  const query = `SELECT * FROM categories_description WHERE categories_id IN (${placeholders}) AND language_id = ?`;
+  const query = `SELECT * FROM ${cdTable} WHERE categories_id IN (${placeholders}) AND language_id = ?`;
   const rows = await queryRows<CategoryDescriptionRow>({
     query,
     params: [...cIds, languageId],
@@ -61,7 +66,8 @@ export const mapCategoriesBreadcrumb = (items: CategoryBreadcrumbType[]) => {
 
 export const getCategoriesBreadcrumbContent = async (categoryId: number) => {
   if (!categoryId) return [];
-  const pcIds = await getCategoryPath(categoryId);
+
+  const pcIds = await getCategoryPath({ cId: categoryId, cLimit: 4 });
   if (!pcIds.length) return [];
 
   const ids = pcIds.map((c) => c.categories_id);

@@ -1,6 +1,8 @@
 ---
+import { currencyApi } from '>/lib/server/request/currency';
 import type { ProductFullType } from '>/lib/shared/types';
 
+const currency = await currencyApi.resolveCurrency();
 const { productInfo } = Astro.props;
 const { product, content } = productInfo;
 
@@ -28,7 +30,9 @@ const inStock = product.products_status === 1;
 
   <!-- RIGHT: Purchase panel -->
   <div class="product-purchase-panel">
-    <p class="product-price">£{Number(product.products_price).toFixed(2)}</p>
+    <p class="product-price">
+      {currencyApi.formatCurrency(product.products_price, currency)}
+    </p>
 
     <p class="product-meta">Model: {product.products_model}</p>
 

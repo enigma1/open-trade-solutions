@@ -1,6 +1,6 @@
-import { insertRows } from '>/lib/server/db';
+import { insertRows, updateRows } from '>/lib/server/db';
 import { buildQuery, createQueryContext } from '>/lib/server/query';
-import { queryRows } from '>/lib/server/db';
+import { dbTables, dbAliases, queryRows } from '>/lib/server/db';
 import { getSession } from '>/lib/server/request';
 import { getDefaultUserPrefs } from '>/lib/server/config';
 import type { SessionData } from '>/lib/shared/types';
@@ -12,17 +12,20 @@ export const getSessionData = () => getSession()?.session_data;
 export const getSessionById = async (
   sessionKey: string,
 ): Promise<SessionRow | null> => {
+  const sAlias = dbAliases.sessions;
+  const sTable = dbTables.sessions;
+
   const ctx = createQueryContext(
     {
       s: {
-        sqlAlias: 's',
+        sqlAlias: sAlias,
         domainAlias: 'session',
         columns: ['*'],
       },
     },
     {
-      table: 'sessions',
-      alias: 's',
+      table: sTable,
+      alias: sAlias,
     },
   );
 
@@ -61,4 +64,22 @@ export const createSessionInDatabase = async (
     session_id: sessionKey,
     session_data: sessionData,
   };
+};
+
+export const updateSessionInDatabase = async (
+  sessionKey: string,
+  sessionData: SessionData,
+): Promise<void> => {
+  await updateRows({
+    table: 'sessions',
+    columnsOrder: ['session_data'],
+    row: [sessionData],
+    where: [
+      {
+        column: 'session_key',
+        operator: '=',
+        value: sessionKey,
+      },
+    ],
+  });
 };

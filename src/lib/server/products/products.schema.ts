@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { dbAliases } from '>/lib/server/db';
 import { limitList, getUniqueNumberedList } from '>/lib/shared/utils';
 
 export const ProductSortSchema = z.enum(['price_asc', 'price_desc', 'newest']);
@@ -31,49 +32,49 @@ export type ProductsQuery = z.infer<typeof ProductsQuerySchema>;
 
 // Initial Selects
 export const initialProductsOnlySelect = {
-  p: {
-    sqlAlias: 'p',
+  [dbAliases.products]: {
+    sqlAlias: dbAliases.products,
     domainAlias: 'product',
     columns: ['*'],
   },
-  sp: {
-    sqlAlias: 'sp',
+  [dbAliases.products_specials]: {
+    sqlAlias: dbAliases.products_specials,
     domainAlias: 'special',
     columns: ['*'],
   },
 };
 
 export const initialProductsSelect = {
-  p: {
-    sqlAlias: 'p',
+  [dbAliases.products]: {
+    sqlAlias: dbAliases.products,
     domainAlias: 'product',
     columns: ['*'],
   },
-  sp: {
-    sqlAlias: 'sp',
+  [dbAliases.products_specials]: {
+    sqlAlias: dbAliases.products_specials,
     domainAlias: 'special',
     columns: ['*'],
   },
-  p2c: {
-    sqlAlias: 'p2c',
+  [dbAliases.products_to_categories]: {
+    sqlAlias: dbAliases.products_to_categories,
     domainAlias: 'inCategories',
     columns: ['categories_id'],
   },
 };
 
 export const initialProductInfoSelect = {
-  p: {
-    sqlAlias: 'p',
+  [dbAliases.products]: {
+    sqlAlias: dbAliases.products,
     domainAlias: 'product',
     columns: ['*'],
   },
-  sp: {
-    sqlAlias: 'sp',
+  [dbAliases.products_specials]: {
+    sqlAlias: dbAliases.products_specials,
     domainAlias: 'special',
     columns: ['*'],
   },
-  pd: {
-    sqlAlias: 'pd',
+  [dbAliases.products_description]: {
+    sqlAlias: dbAliases.products_description,
     domainAlias: 'content',
     columns: ['products_name', 'products_description'],
   },
@@ -81,26 +82,26 @@ export const initialProductInfoSelect = {
 
 export const initialProductInfoFieldsSelect = {
   ...initialProductInfoSelect,
-  p2pef: {
-    sqlAlias: 'p2pef',
+  [dbAliases.products_to_products_extra_fields]: {
+    sqlAlias: dbAliases.products_to_products_extra_fields,
     domainAlias: 'extraFields',
     columns: ['*'],
   },
-  pef: {
-    sqlAlias: 'pef',
+  [dbAliases.products_extra_fields]: {
+    sqlAlias: dbAliases.products_extra_fields,
     domainAlias: 'extraFieldsContent',
     columns: ['products_extra_fields_name', 'fields_configuration'],
   },
 };
 
 export const initialProductBreadcrumbSelect = {
-  p: {
-    sqlAlias: 'p',
+  [dbAliases.products]: {
+    sqlAlias: dbAliases.products,
     domainAlias: 'product',
     columns: ['products_id'],
   },
-  pd: {
-    sqlAlias: 'pd',
+  [dbAliases.products_description]: {
+    sqlAlias: dbAliases.products_description,
     domainAlias: 'content',
     columns: ['products_name', 'products_id'],
   },

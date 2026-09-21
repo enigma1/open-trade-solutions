@@ -1,7 +1,7 @@
 @layer components {
   .product-title {
-    @apply text-2xl font-bold pb-3;
-    background-color: var(--color-srf-peak);
+    @apply text-2xl font-bold px-4 py-2 rounded-t-sm;
+    background-color: var(--color-srf-elevated);
     color: var(--color-text);
   }
 
@@ -24,7 +24,7 @@
 
   .product-purchase-panel {
     @apply flex flex-col gap-3 h-fit;
-    background-color: var(--color-srf-peak);
+    background-color: var(--color-srf-dim);
     border-color: var(--color-border);
     border-radius: 0.5rem;
     padding: 1rem;

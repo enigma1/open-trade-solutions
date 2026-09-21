@@ -1,3 +1,4 @@
+import { dbTables } from '>/lib/server/db';
 import { queryRows } from '>/lib/server/db/queryRows';
 import { getProductForBreadcrumb } from './product.service';
 import type { ProductDescriptionRow } from './types';
@@ -8,39 +9,14 @@ import {
   getCategoriesOfProduct,
 } from '>/lib/server/categories';
 
-// export const getSpecials = async (
-//   productIds: number[],
-// ): Promise<ProductSpecialRow[]> => {
-//   if (productIds.length === 0) return [];
-//   const placeholders = productIds.map(() => '?').join(',');
-//   const rows = await queryRows<ProductSpecialRow>(
-//     `SELECT * FROM products_specials
-//      WHERE products_id IN (${placeholders})
-//      AND NOW() BETWEEN start_date AND end_date`,
-//     productIds,
-//   );
-//   return rows;
-// };
-
-// export const getProductById = async (id: number) => {
-//   const query =
-//     'SELECT * FROM products p left join products_description pd on (p.products_id = pd.products_id) AND pd.language_id = ? WHERE p.products_id = ?';
-//   const rows = await queryRows<ProductDescriptionRow>({
-//     query,
-//     params: [1, id],
-//   });
-
-//   return rows[0];
-// };
-
 export const getProductsDescriptions = async (
   productIds: number[],
 ): Promise<ProductDescriptionRow[]> => {
   if (!productIds.length) return [];
 
+  const pdTable = dbTables.products_description;
   const placeholders = productIds.map(() => '?').join(',');
-
-  const query = `SELECT * FROM products_description WHERE products_id IN (${placeholders}) AND language_id = ?`;
+  const query = `SELECT * FROM ${pdTable} WHERE products_id IN (${placeholders}) AND language_id = ?`;
 
   const rows = await queryRows<ProductDescriptionRow>({
     query,

@@ -4,7 +4,6 @@ import ProductGridCard from '>/components/products/ProductGridCard.astro';
 import { getFeaturedProducts } from '>/lib/server/products/product.service';
 import type { ProductListType, ProductListBaseType } from '>/lib/shared/types';
 import { getProductsDescriptions } from '>/lib/server/products/product.repo';
-import { AddToCartButton } from '>/islands';
 
 const data = await getFeaturedProducts();
 let products: ProductListType[] = [];

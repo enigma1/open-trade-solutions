@@ -4,7 +4,7 @@ export type LanguageStringsRow = RowDataPacket & {
   string_value: string;
 };
 
-type LanguagesType = {
+export type LanguagesType = {
   languages_id: number;
   code: string;
   name: string;
@@ -12,12 +12,13 @@ type LanguagesType = {
 export type LanguagesMap = Record<string, LanguagesType>;
 export type LanguageRow = RowDataPacket & LanguagesType;
 
-type CurrenciesType = {
+export type CurrenciesType = {
   currencies_id: number;
   code: string;
   name: string;
   type: 'fiat' | 'crypto' | 'custom';
   symbol_position: 'left' | 'right';
+  symbol: string;
   decimal_places: number;
   rate: number;
 };
