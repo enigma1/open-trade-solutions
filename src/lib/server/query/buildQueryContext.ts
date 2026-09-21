@@ -1,3 +1,4 @@
+import { languageApi } from '>/lib/server/request/language';
 import type {
   InitialSelectInput,
   SelectGroup,
@@ -8,10 +9,11 @@ import type {
 export type InitialSelect = Record<string, SelectGroup>;
 export type SelectMap = Record<string, string[]>;
 
-export const createQueryContext = (
+export const createQueryContext = async (
   initialSelect: InitialSelectInput = {},
   fromBase: BaseTable,
-): QueryContext => {
+): Promise<QueryContext> => {
+  const lId = (await languageApi.resolveLanguage()).languages_id;
   const select = new Map<string, SelectGroup>();
 
   for (const [sqlAlias, group] of Object.entries(initialSelect)) {
@@ -31,6 +33,7 @@ export const createQueryContext = (
     nestTables: false,
     fromBase,
     ignoredTables: [],
+    languageId: lId,
   };
 };
 
@@ -106,14 +109,14 @@ type BuildQueryContextProps<T> = {
   initialSelect?: InitialSelectInput;
   fromBase: BaseTable;
 };
-export const buildQueryContext = <T>({
+export const buildQueryContext = async <T>({
   params,
   schema,
   features,
   initialSelect = {},
   fromBase,
 }: BuildQueryContextProps<T>) => {
-  const ctx = createQueryContext(initialSelect, fromBase);
+  const ctx = await createQueryContext(initialSelect, fromBase);
   const query = schema.parse(Object.fromEntries(params.entries()));
 
   for (const feature of features) {

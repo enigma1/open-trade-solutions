@@ -7,6 +7,7 @@ import {
   createQueryContext,
 } from '>/lib/server/query/buildQueryContext';
 import { getConfig } from '>/lib/server/config';
+import { languageApi } from '>/lib/server/request/language';
 
 export const shouldIgnoreTable = (ctx: QueryContext, table: string) =>
   ctx.ignoredTables?.includes(table) ?? false;
@@ -15,7 +16,7 @@ export const createProductQueryContext = async (
   fromBase: BaseTable,
 ): Promise<QueryContext> => {
   const useFields = Boolean(await getConfig('products.use_extra_fields'));
-  const ctx = createQueryContext(initialProductsSelect, fromBase);
+  const ctx = await createQueryContext(initialProductsSelect, fromBase);
   ctx.ignoredTables = [];
   const pAlias = dbAliases.products;
 
@@ -133,10 +134,7 @@ export const applyProductWithSpecials = (
   applyWithSpecialsDated(ctx, inAlias);
 };
 
-export const applyProductsLanguage = (
-  ctx: QueryContext,
-  languageId: number,
-) => {
+export const applyProductsLanguage = async (ctx: QueryContext) => {
   const pdTable = dbTables.products_description;
   const pdAlias = dbAliases.products_description;
   const pAlias = dbAliases.products;
@@ -155,7 +153,7 @@ export const applyProductsLanguage = (
     domainAlias: 'productsDescription',
     columns: ['products_name', 'products_description'],
   });
-  ctx.params.push(languageId);
+  ctx.params.push(ctx.languageId);
 };
 
 export const applyProductsSort = (ctx: QueryContext, sort?: string) => {

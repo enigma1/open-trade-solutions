@@ -1,3 +1,4 @@
+import { dbTables, dbAliases } from '>/lib/server/db';
 import { buildQueryContext, InitialSelectInput } from '>/lib/server/query';
 import { getPage, getLimitOffset } from '>/lib/server/page-listings';
 
@@ -24,15 +25,16 @@ import {
 import { initialCategoriesBreadcrumbSelect } from './categories.schema';
 
 export const getCategoriesOfProduct = async (id: number) => {
-  const ctx = createQueryContext(initialCategoriesBreadcrumbSelect, {
-    table: 'categories',
-    alias: 'c',
+  const ctx = await createQueryContext(initialCategoriesBreadcrumbSelect, {
+    table: dbTables.categories,
+    alias: dbAliases.categories,
   });
+  const p2cAlias = dbAliases.products_to_categories;
 
   applyCategoriesToProducts(ctx, [id]);
   applyCategoriesSort(ctx, 'order_asc');
   // ctx.where.push('c.categories_display = 1'); // Add a new column later for this
-  ctx.where.push('p2c.products_id = ?');
+  ctx.where.push(`${p2cAlias}.products_id = ?`);
   ctx.params.push(id);
   ctx.nestTables = ctx.joins.size > 0;
 
@@ -58,13 +60,15 @@ export const buildCategoriesQueryContext = async (
   params: URLSearchParams,
   initialSelect: InitialSelectInput,
 ) => {
+  const cTable = dbTables.categories;
+  const cAlias = dbAliases.categories;
   const raw = Object.fromEntries(params.entries());
   const page = getPage(raw.page);
   const pagination = await getLimitOffset(page);
 
   // It builds pagination on the return object fix it.
-  const { ctx, query } = buildQueryContext<CategoriesQuery>({
-    fromBase: { table: 'categories', alias: 'c' },
+  const { ctx, query } = await buildQueryContext<CategoriesQuery>({
+    fromBase: { table: cTable, alias: cAlias },
     params,
     schema: CategoriesQuerySchema.pick({
       categories: true,

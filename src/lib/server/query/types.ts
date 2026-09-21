@@ -1,4 +1,4 @@
-type QueryMode = "rows" | "count";
+type QueryMode = 'rows' | 'count';
 export type BaseTable = {
   table: string;
   alias: string;
@@ -30,4 +30,5 @@ export type QueryContext = {
   nestTables?: boolean;
   limit?: number;
   ignoredTables: string[];
+  languageId: number;
 };

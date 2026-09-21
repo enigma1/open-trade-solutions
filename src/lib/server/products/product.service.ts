@@ -90,7 +90,7 @@ export const buildProductQueryContext = async (
   const page = getPage(raw.page);
   const pagination = await getLimitOffset(page);
   // It builds pagination on the return object fix it.
-  const { ctx, query } = buildQueryContext<ProductsQuery>({
+  const { ctx, query } = await buildQueryContext<ProductsQuery>({
     fromBase: { table: pTable, alias: pAlias },
     params,
     schema: ProductsQuerySchema.pick({
@@ -140,7 +140,7 @@ export const buildSpecialProductsQueryContext = async (
   const raw = Object.fromEntries(params.entries());
   const page = getPage(raw.page);
   const pagination = await getLimitOffset(page);
-  const { ctx, query } = buildQueryContext<ProductsQuery>({
+  const { ctx, query } = await buildQueryContext<ProductsQuery>({
     fromBase: { table: spTable, alias: spAlias },
     params,
     schema: ProductsQuerySchema.pick({
@@ -170,17 +170,17 @@ export const getFeaturedProducts = async () => {
   const count = Number(await getConfig('products.featured_listing_size'));
   if (!count) return [];
 
-  const { ctx } = buildFeaturedProductsQueryContext(count);
+  const { ctx } = await buildFeaturedProductsQueryContext(count);
   return await processNestedTablesSimpleRequest<ProductListBaseType>({
     ctx,
   });
 };
 
-export const buildFeaturedProductsQueryContext = (count: number) => {
+export const buildFeaturedProductsQueryContext = async (count: number) => {
   const fpTable = dbTables.products_featured;
   const fpAlias = dbAliases.products_featured;
   const pAlias = dbAliases.products;
-  const ctx = createQueryContext(initialProductsOnlySelect, {
+  const ctx = await createQueryContext(initialProductsOnlySelect, {
     table: fpTable,
     alias: fpAlias,
   });
@@ -198,9 +198,8 @@ export const buildFeaturedProductsQueryContext = (count: number) => {
 export const getProductInfoById = async (id: number) => {
   const pAlias = dbAliases.products;
   const pTable = dbTables.products;
-  const lng = await languageApi.resolveLanguage();
   const useFields = Boolean(await getConfig('products.use_extra_fields'));
-  const ctx = createQueryContext(initialProductInfoSelect, {
+  const ctx = await createQueryContext(initialProductInfoSelect, {
     table: pTable,
     alias: pAlias,
   });
@@ -215,7 +214,7 @@ export const getProductInfoById = async (id: number) => {
     );
   }
   applyWithSpecialsDated(ctx, pAlias);
-  applyProductsLanguage(ctx, lng.languages_id);
+  applyProductsLanguage(ctx);
   applyProductToProductsExtraFields(ctx, pAlias);
 
   ctx.where.push(`${pAlias}.products_display = 1`);
@@ -232,12 +231,12 @@ export const getProductInfoById = async (id: number) => {
 export const getProductForBreadcrumb = async (id: number) => {
   const pAlias = dbAliases.products;
   const pTable = dbTables.products;
-  const ctx = createQueryContext(initialProductBreadcrumbSelect, {
+  const ctx = await createQueryContext(initialProductBreadcrumbSelect, {
     table: pTable,
     alias: pAlias,
   });
 
-  applyProductsLanguage(ctx, 1);
+  applyProductsLanguage(ctx);
   ctx.where.push(`${pAlias}.products_display = 1`);
   ctx.where.push(`${pAlias}.products_id = ?`);
   ctx.params.push(id);

@@ -1,15 +1,18 @@
-import { queryRows } from '>/lib/server/db';
+import { queryRows, dbTables } from '>/lib/server/db';
 import { routes } from '>/lib/shared/routes';
+import { languageApi } from '>/lib/server/request/language';
+
 import type { BrandDescriptionRow } from './types';
 
 export const getBrandsDescriptions = async (
   bIds: number[],
-  languageId = 1,
 ): Promise<BrandDescriptionRow[]> => {
   if (!bIds.length) return [];
 
+  const languageId = (await languageApi.resolveLanguage()).languages_id;
+  const bdTable = dbTables.brands_description;
   const placeholders = bIds.map(() => '?').join(',');
-  const query = `SELECT * FROM brands_description WHERE brands_id IN (${placeholders}) AND language_id = ?`;
+  const query = `SELECT * FROM ${bdTable} WHERE brands_id IN (${placeholders}) AND language_id = ?`;
   const rows = await queryRows<BrandDescriptionRow>({
     query,
     params: [...bIds, languageId],

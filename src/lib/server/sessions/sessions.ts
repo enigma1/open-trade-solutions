@@ -15,7 +15,7 @@ export const getSessionById = async (
   const sAlias = dbAliases.sessions;
   const sTable = dbTables.sessions;
 
-  const ctx = createQueryContext(
+  const ctx = await createQueryContext(
     {
       s: {
         sqlAlias: sAlias,
@@ -47,7 +47,7 @@ export const getSessionById = async (
 export const createSessionInDatabase = async (
   sessionKey: string,
 ): Promise<SessionRow> => {
-  const table = 'sessions';
+  const table = dbTables.sessions;
   const initialPrefs = await getDefaultUserPrefs();
   const sessionData: SessionData = {
     prefs: initialPrefs,

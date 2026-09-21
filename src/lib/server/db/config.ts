@@ -10,6 +10,7 @@ export const db = mysql.createPool({
 
 export const dbTables = {
   brands: 'brands',
+  brands_description: 'brands_description',
   categories: 'categories',
   categories_description: 'categories_description',
   configuration: 'configuration',
@@ -30,6 +31,7 @@ export const dbTables = {
 
 export const dbAliases = {
   brands: 'pb',
+  brands_description: 'bd',
   categories: 'c',
   categories_description: 'cd',
   configuration: 'cfg',
