@@ -1,4 +1,4 @@
-import { languageApi } from '>/lib/server/request/language';
+import { languageApi } from '>/lib/server/request';
 import type {
   InitialSelectInput,
   SelectGroup,

@@ -1,5 +1,4 @@
-import { currencyApi } from '>/lib/server/request/currency';
-import { languageApi } from '>/lib/server/request/language';
+import { currencyApi, languageApi } from '>/lib/server/request';
 
 export const localeApi = {
   async resolve() {

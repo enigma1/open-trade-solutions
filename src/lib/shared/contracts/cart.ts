@@ -5,3 +5,4 @@ export const CartItemSchema = z.object({
   qty: z.number().int().positive(),
   fields: z.array(z.number().int().positive()).optional(),
 });
+export const CartItemsSchema = z.array(CartItemSchema);

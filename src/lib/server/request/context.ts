@@ -1,7 +1,7 @@
-import { AsyncLocalStorage } from "node:async_hooks";
-import type { SessionRow } from ">/lib/server/sessions";
+import { AsyncLocalStorage } from 'node:async_hooks';
+import type { SessionRow } from '>/lib/server/sessions';
 
-type RequestStore = {
+export type RequestStore = {
   session?: SessionRow;
   sessionId?: string;
 };

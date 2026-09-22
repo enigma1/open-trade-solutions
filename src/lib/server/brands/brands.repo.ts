@@ -1,6 +1,6 @@
 import { queryRows, dbTables } from '>/lib/server/db';
 import { routes } from '>/lib/shared/routes';
-import { languageApi } from '>/lib/server/request/language';
+import { languageApi } from '>/lib/server/request';
 
 import type { BrandDescriptionRow } from './types';
 

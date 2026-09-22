@@ -1,3 +1,3 @@
 export * from './buildQuery';
-export * from './types';
 export * from './buildQueryContext';
+export * from './types';

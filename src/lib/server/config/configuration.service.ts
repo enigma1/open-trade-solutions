@@ -49,7 +49,7 @@ export const resetConfigCache = () => {
 
 export const getDefaultUserPrefs = async (): Promise<UserPrefs> => {
   const config = await getConfigMultiple({
-    itemsPerPage: 'listing.page_listing_size',
+    itemsPerPage: 'products.page_listing_size',
     theme: 'theme.default',
     lang: 'languages.default',
     cu: 'currencies.default',

@@ -7,7 +7,6 @@ import {
   createQueryContext,
 } from '>/lib/server/query/buildQueryContext';
 import { getConfig } from '>/lib/server/config';
-import { languageApi } from '>/lib/server/request/language';
 
 export const shouldIgnoreTable = (ctx: QueryContext, table: string) =>
   ctx.ignoredTables?.includes(table) ?? false;

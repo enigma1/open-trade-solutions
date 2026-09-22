@@ -11,14 +11,22 @@ import {
   deleteCookie,
   setProbeCookie,
   setShopCookie,
-} from '>/lib/server/request/cookies';
-
+  RequestStore,
+} from '>/lib/server/request';
+import { handleRequestError } from '>/lib/server/errors';
 import { getSessionById, createSessionInDatabase } from '>/lib/server/sessions';
 import { als } from '>/lib/server/request';
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const { cookies, url } = context;
+  const continueRequest = async (store: RequestStore) => {
+    try {
+      return await als.run(store, () => next());
+    } catch (error) {
+      return handleRequestError(error, context);
+    }
+  };
 
+  const { cookies, url } = context;
   const userAgent = context.request.headers.get('user-agent') ?? '';
   const isCrawler =
     !userAgent ||
@@ -38,7 +46,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (session) {
       // Make session available throughout the application
       context.locals.session = session;
-      return als.run({ session }, () => next());
+      return continueRequest({ session });
     }
 
     // No match found, remove it from the browser
@@ -49,20 +57,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (redirected === '1' && !probe) {
     context.locals.cookiesDisabled = true;
     setProbeCookie(cookies);
-    return als.run({}, () => next());
+    return continueRequest({});
   }
 
   // No probe cookie present, send it and check if it's a crawler.
   if (!probe) {
     setProbeCookie(cookies);
 
-    // If not a knowwn crawler redirect to mark visitor doesn't accept cookies
+    // If not a knowwn crawler treat as a visitor who blocks cookies
     if (!isCrawler) {
       return context.redirect(createRedirection(url), 303);
     }
 
-    // Do not redirect crawlers just server content
-    return als.run({}, () => next());
+    // Do not redirect crawlers serve empty session content
+    return continueRequest({});
   }
 
   // Probe cookies received, if invalid send a new one and issue a redirect
@@ -76,6 +84,5 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const session = await createSessionInDatabase(newSessionId);
   setShopCookie(cookies, newSessionId);
   deleteCookie(cookies, PROBE_COOKIE_ID);
-
-  return als.run({ session }, () => next());
+  return continueRequest({ session });
 });
